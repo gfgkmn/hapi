@@ -1,0 +1,327 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B00000C3D4E5F6A7B /* HapiClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000A1B2C3D4E5F /* HapiClientApp.swift */; };
+		B00001C3D4E5F6A7B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00001A1B2C3D4E5F /* Models.swift */; };
+		B00002C3D4E5F6A7B /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00002A1B2C3D4E5F /* APIClient.swift */; };
+		B00003C3D4E5F6A7B /* SSEClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00003A1B2C3D4E5F /* SSEClient.swift */; };
+		B00004C3D4E5F6A7B /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00004A1B2C3D4E5F /* Keychain.swift */; };
+		B00005C3D4E5F6A7B /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00005A1B2C3D4E5F /* TokenManager.swift */; };
+		B00006C3D4E5F6A7B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00006A1B2C3D4E5F /* AppState.swift */; };
+		B00007C3D4E5F6A7B /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00007A1B2C3D4E5F /* ChatViewModel.swift */; };
+		B00008C3D4E5F6A7B /* SessionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00008A1B2C3D4E5F /* SessionsViewModel.swift */; };
+		B00009C3D4E5F6A7B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00009A1B2C3D4E5F /* ChatView.swift */; };
+		B00010C3D4E5F6A7B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00010A1B2C3D4E5F /* ContentView.swift */; };
+		B00011C3D4E5F6A7B /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00011A1B2C3D4E5F /* LoginView.swift */; };
+		B00012C3D4E5F6A7B /* SessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00012A1B2C3D4E5F /* SessionsView.swift */; };
+		B00013C3D4E5F6A7B /* CreateSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00013A1B2C3D4E5F /* CreateSessionView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B00000A1B2C3D4E5F /* HapiClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapiClientApp.swift; sourceTree = "<group>"; };
+		B00001A1B2C3D4E5F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B00002A1B2C3D4E5F /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		B00003A1B2C3D4E5F /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
+		B00004A1B2C3D4E5F /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		B00005A1B2C3D4E5F /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
+		B00006A1B2C3D4E5F /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B00007A1B2C3D4E5F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		B00008A1B2C3D4E5F /* SessionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsViewModel.swift; sourceTree = "<group>"; };
+		B00009A1B2C3D4E5F /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		B00010A1B2C3D4E5F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B00011A1B2C3D4E5F /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		B00012A1B2C3D4E5F /* SessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsView.swift; sourceTree = "<group>"; };
+		B00013A1B2C3D4E5F /* CreateSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSessionView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E2F4 /* HapiClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HapiClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		749F3AD4084C40D082BC63C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1B2C3D4E5F6A7B8C9D0E1F3 = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A7B8C9D0E1F4 /* Sources */,
+				A1B2C3D4E5F6A7B8C9D0E1F5 /* Products */,
+			);
+			path = HapiClient;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6A7B8C9D0E1F5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A7B8C9D0E2F4 /* HapiClient.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6A7B8C9D0E1F4 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B00000A1B2C3D4E5F /* HapiClientApp.swift */,
+				C1B2C3D4E5F6A7B8C9D0E1 /* Models */,
+				C2B2C3D4E5F6A7B8C9D0E1 /* Networking */,
+				C3B2C3D4E5F6A7B8C9D0E1 /* Utilities */,
+				C4B2C3D4E5F6A7B8C9D0E1 /* ViewModels */,
+				C5B2C3D4E5F6A7B8C9D0E1 /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+
+		C1B2C3D4E5F6A7B8C9D0E1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B00001A1B2C3D4E5F /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+
+		C2B2C3D4E5F6A7B8C9D0E1 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				B00002A1B2C3D4E5F /* APIClient.swift */,
+				B00003A1B2C3D4E5F /* SSEClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+
+		C3B2C3D4E5F6A7B8C9D0E1 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				B00004A1B2C3D4E5F /* Keychain.swift */,
+				B00005A1B2C3D4E5F /* TokenManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+
+		C4B2C3D4E5F6A7B8C9D0E1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B00006A1B2C3D4E5F /* AppState.swift */,
+				B00007A1B2C3D4E5F /* ChatViewModel.swift */,
+				B00008A1B2C3D4E5F /* SessionsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+
+		C5B2C3D4E5F6A7B8C9D0E1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B00009A1B2C3D4E5F /* ChatView.swift */,
+				B00010A1B2C3D4E5F /* ContentView.swift */,
+				B00013A1B2C3D4E5F /* CreateSessionView.swift */,
+				B00011A1B2C3D4E5F /* LoginView.swift */,
+				B00012A1B2C3D4E5F /* SessionsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3D4E5F6A7B8C9D0E1F6 /* HapiClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F6A7B8C9D0E1F8 /* Build configuration list for PBXNativeTarget "HapiClient" */;
+			buildPhases = (
+				A1B2C3D4E5F6A7B8C9D0E2F3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HapiClient;
+			productName = HapiClient;
+			productReference = A1B2C3D4E5F6A7B8C9D0E2F4 /* HapiClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A1B2C3D4E5F6A7B8C9D0E1F6 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1B2C3D4E5F6A7B8C9D0E1F7 /* Build configuration list for PBXProject "HapiClient" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3D4E5F6A7B8C9D0E1F3;
+			productRefGroup = A1B2C3D4E5F6A7B8C9D0E1F5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3D4E5F6A7B8C9D0E1F6 /* HapiClient */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3D4E5F6A7B8C9D0E2F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00000C3D4E5F6A7B /* HapiClientApp.swift in Sources */,
+				B00001C3D4E5F6A7B /* Models.swift in Sources */,
+				B00002C3D4E5F6A7B /* APIClient.swift in Sources */,
+				B00003C3D4E5F6A7B /* SSEClient.swift in Sources */,
+				B00004C3D4E5F6A7B /* Keychain.swift in Sources */,
+				B00005C3D4E5F6A7B /* TokenManager.swift in Sources */,
+				B00006C3D4E5F6A7B /* AppState.swift in Sources */,
+				B00007C3D4E5F6A7B /* ChatViewModel.swift in Sources */,
+				B00008C3D4E5F6A7B /* SessionsViewModel.swift in Sources */,
+				B00009C3D4E5F6A7B /* ChatView.swift in Sources */,
+				B00010C3D4E5F6A7B /* ContentView.swift in Sources */,
+				B00011C3D4E5F6A7B /* LoginView.swift in Sources */,
+				B00012C3D4E5F6A7B /* SessionsView.swift in Sources */,
+				B00013C3D4E5F6A7B /* CreateSessionView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F6A7B8C9D0E1F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F6A7B8C9D0E2F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F6A7B8C9D0E2F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSTES_CATALOG_COMPILER_OPTIMIZATION = time;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "run.hapi.HapiClient";
+				PRODUCT_NAME = HapiClient;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F6A7B8C9D0E2F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSTES_CATALOG_COMPILER_OPTIMIZATION = time;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "run.hapi.HapiClient";
+				PRODUCT_NAME = HapiClient;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3D4E5F6A7B8C9D0E1F7 /* Build configuration list for PBXProject "HapiClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6A7B8C9D0E1F9 /* Debug */,
+				A1B2C3D4E5F6A7B8C9D0E2F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F6A7B8C9D0E1F8 /* Build configuration list for PBXNativeTarget "HapiClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6A7B8C9D0E2F1 /* Debug */,
+				A1B2C3D4E5F6A7B8C9D0E2F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A1B2C3D4E5F6A7B8C9D0E1F2 /* Project object */;
+}
