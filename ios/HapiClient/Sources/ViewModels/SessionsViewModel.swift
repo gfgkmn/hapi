@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 @MainActor
 final class SessionsViewModel: ObservableObject {
@@ -7,41 +8,45 @@ final class SessionsViewModel: ObservableObject {
     @Published var error: String?
 
     private let api: APIClient
-    private var sseTask: Task<Void, Never>?
+    private let store: LocalStore
+    private let syncCoordinator: SyncCoordinator
+    private var cancellables = Set<AnyCancellable>()
 
-    init(api: APIClient) {
+    init(api: APIClient, store: LocalStore, syncCoordinator: SyncCoordinator) {
         self.api = api
-    }
+        self.store = store
+        self.syncCoordinator = syncCoordinator
 
-    deinit {
-        sseTask?.cancel()
+        syncCoordinator.events
+            .filter { if case .sessionsChanged = $0 { return true }; return false }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task { await self.reloadFromStore() }
+            }
+            .store(in: &cancellables)
     }
 
     func load() async {
-        isLoading = true
+        guard !isLoading else { return }
+
+        // Show cached immediately
+        let cached = await store.loadSessions()
+        if !cached.isEmpty {
+            sessions = cached
+        }
+
+        // Fetch fresh
+        isLoading = sessions.isEmpty
         error = nil
         do {
-            sessions = try await api.fetchSessions()
+            let fresh = try await api.fetchSessions()
+            await store.storeSessions(fresh)
+            sessions = fresh
         } catch {
             self.error = error.localizedDescription
         }
         isLoading = false
-    }
-
-    func startSSE() {
-        sseTask?.cancel()
-        let client = SSEClient(baseURL: api.baseURL, token: /* pass JWT */ "")
-        sseTask = Task { [weak self] in
-            for await event in client.events() {
-                guard let self else { break }
-                await self.handle(event: event)
-            }
-        }
-    }
-
-    func stopSSE() {
-        sseTask?.cancel()
-        sseTask = nil
     }
 
     // MARK: - Session actions
@@ -58,17 +63,13 @@ final class SessionsViewModel: ObservableObject {
 
     func delete(_ session: Session) async {
         do { try await api.deleteSession(id: session.id) } catch {}
+        await store.removeSession(id: session.id)
         sessions.removeAll { $0.id == session.id }
     }
 
-    // MARK: - SSE handling
+    // MARK: - Private
 
-    private func handle(event: SyncEvent) async {
-        switch event {
-        case .sessionAdded, .sessionUpdated, .sessionRemoved:
-            await load()
-        default:
-            break
-        }
+    private func reloadFromStore() async {
+        sessions = await store.loadSessions()
     }
 }

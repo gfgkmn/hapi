@@ -6,8 +6,13 @@ struct SessionsView: View {
     @State private var showingCreate = false
     @State private var navigateToSessionId: String?
 
-    init(api: APIClient) {
-        _vm = StateObject(wrappedValue: SessionsViewModel(api: api))
+    private let store: LocalStore
+    private let syncCoordinator: SyncCoordinator
+
+    init(api: APIClient, store: LocalStore, syncCoordinator: SyncCoordinator) {
+        self.store = store
+        self.syncCoordinator = syncCoordinator
+        _vm = StateObject(wrappedValue: SessionsViewModel(api: api, store: store, syncCoordinator: syncCoordinator))
     }
 
     var body: some View {
@@ -74,7 +79,7 @@ struct SessionsView: View {
                 }
             }
             .navigationDestination(for: Session.self) { session in
-                ChatView(api: appState.apiClient!, sessionId: session.id)
+                ChatView(api: appState.apiClient!, store: store, syncCoordinator: syncCoordinator, sessionId: session.id)
             }
             .sheet(isPresented: $showingCreate) {
                 CreateSessionView(api: appState.apiClient!) { sessionId in
@@ -87,7 +92,7 @@ struct SessionsView: View {
                 set: { if !$0 { navigateToSessionId = nil } }
             )) {
                 if let sessionId = navigateToSessionId {
-                    ChatView(api: appState.apiClient!, sessionId: sessionId)
+                    ChatView(api: appState.apiClient!, store: store, syncCoordinator: syncCoordinator, sessionId: sessionId)
                 }
             }
         }

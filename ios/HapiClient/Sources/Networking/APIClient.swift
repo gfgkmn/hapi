@@ -26,10 +26,9 @@ enum APIError: LocalizedError {
 
 // MARK: - API Client
 
-@MainActor
-final class APIClient: ObservableObject {
+final class APIClient: @unchecked Sendable {
     let baseURL: URL
-    private var token: String
+    private let token: String
 
     private let decoder: JSONDecoder = {
         let d = JSONDecoder()
@@ -43,13 +42,15 @@ final class APIClient: ObservableObject {
         return e
     }()
 
+    private let session: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        return URLSession(configuration: config)
+    }()
+
     init(baseURL: URL, token: String) {
         self.baseURL = baseURL
         self.token = token
-    }
-
-    func updateToken(_ newToken: String) {
-        self.token = newToken
     }
 
     // MARK: - Core request
@@ -74,7 +75,7 @@ final class APIClient: ObservableObject {
 
         let (data, response): (Data, URLResponse)
         do {
-            (data, response) = try await URLSession.shared.data(for: req)
+            (data, response) = try await session.data(for: req)
         } catch {
             throw APIError.networkError(error)
         }
@@ -117,7 +118,7 @@ final class APIClient: ObservableObject {
 
         let (data, response): (Data, URLResponse)
         do {
-            (data, response) = try await URLSession.shared.data(for: req)
+            (data, response) = try await session.data(for: req)
         } catch {
             throw APIError.networkError(error)
         }
@@ -198,6 +199,26 @@ final class APIClient: ObservableObject {
         try await requestVoid("api/sessions/\(id)/archive")
     }
 
+    func setPermissionMode(sessionId: String, mode: String) async throws {
+        struct Body: Encodable { let mode: String }
+        try await requestVoid("api/sessions/\(sessionId)/permission-mode", body: Body(mode: mode))
+    }
+
+    func setModelMode(sessionId: String, model: String) async throws {
+        struct Body: Encodable { let model: String }
+        try await requestVoid("api/sessions/\(sessionId)/model", body: Body(model: model))
+    }
+
+    func uploadFile(sessionId: String, filename: String, content: String, mimeType: String) async throws -> UploadFileResponse {
+        struct Body: Encodable { let filename: String; let content: String; let mimeType: String }
+        return try await request("api/sessions/\(sessionId)/upload", method: "POST", body: Body(filename: filename, content: content, mimeType: mimeType))
+    }
+
+    func deleteUploadFile(sessionId: String, path: String) async throws {
+        struct Body: Encodable { let path: String }
+        try await requestVoid("api/sessions/\(sessionId)/upload/delete", body: Body(path: path))
+    }
+
     // MARK: - Machines
 
     func fetchMachines() async throws -> [Machine] {
@@ -217,11 +238,14 @@ final class APIClient: ObservableObject {
         return try await request(path)
     }
 
-    func sendMessage(sessionId: String, text: String) async throws {
-        // The API expects content as a string or structured blocks.
-        // Sending as plain string for simplicity; adjust if server requires blocks.
-        struct Body: Encodable { let content: String }
-        try await requestVoid("api/sessions/\(sessionId)/messages", method: "POST", body: Body(content: text))
+    func sendMessage(sessionId: String, text: String, localId: String? = nil, attachments: [AttachmentMetadata]? = nil) async throws {
+        let body = SendMessageRequest(text: text, localId: localId, attachments: attachments)
+        try await requestVoid("api/sessions/\(sessionId)/messages", method: "POST", body: body)
+    }
+
+    func fetchSlashCommands(sessionId: String) async throws -> [SlashCommand] {
+        let resp: SlashCommandsResponse = try await request("api/sessions/\(sessionId)/slash-commands")
+        return resp.commands ?? []
     }
 
     // MARK: - Permissions

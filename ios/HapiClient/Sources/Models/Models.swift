@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - Auth
 
@@ -6,12 +7,12 @@ struct AuthRequest: Encodable {
     let accessToken: String
 }
 
-struct AuthResponse: Decodable {
+struct AuthResponse: Codable {
     let token: String
     let user: User
 }
 
-struct User: Decodable {
+struct User: Codable {
     let id: Int
     let username: String?
     let firstName: String?
@@ -23,7 +24,58 @@ struct User: Decodable {
 typealias PermissionMode = String  // "default"|"acceptEdits"|"bypassPermissions"|"plan"|"read-only"|"safe-yolo"|"yolo"
 typealias ModelMode = String       // "default"|"sonnet"|"opus"
 
-struct Session: Decodable, Identifiable, Hashable {
+enum PermissionModeOption: String, CaseIterable, Identifiable {
+    case `default`, acceptEdits, bypassPermissions, plan
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .default: "Default"
+        case .acceptEdits: "Accept Edits"
+        case .bypassPermissions: "Yolo"
+        case .plan: "Plan Mode"
+        }
+    }
+}
+
+enum ModelModeOption: String, CaseIterable, Identifiable {
+    case `default`, sonnet, opus
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .default: "Default"
+        case .sonnet: "Sonnet"
+        case .opus: "Opus"
+        }
+    }
+}
+
+// MARK: - Attachments
+
+struct AttachmentMetadata: Codable {
+    let id: String
+    let filename: String
+    let mimeType: String
+    let size: Int
+    let path: String
+}
+
+struct UploadFileResponse: Decodable {
+    let success: Bool
+    let path: String
+}
+
+struct PendingAttachment: Identifiable {
+    let id: String
+    let filename: String
+    let mimeType: String
+    let size: Int
+    var path: String?
+    var isUploading: Bool
+    var error: String?
+    var previewData: Data?
+}
+
+struct Session: Codable, Identifiable, Hashable {
     let id: String
     let active: Bool
     let thinking: Bool
@@ -69,12 +121,12 @@ struct Session: Decodable, Identifiable, Hashable {
     }
 }
 
-struct TodoProgress: Decodable {
+struct TodoProgress: Codable {
     let completed: Int
     let total: Int
 }
 
-struct SessionMetadata: Decodable {
+struct SessionMetadata: Codable {
     let path: String?
     let name: String?
     let machineId: String?
@@ -87,19 +139,19 @@ struct SessionMetadata: Decodable {
     let lifecycleStateSince: TimeInterval?
 }
 
-struct AgentState: Decodable {
+struct AgentState: Codable {
     let controlledByUser: Bool?
     let requests: [String: AgentStateRequest]?
     let completedRequests: [String: AgentStateCompletedRequest]?
 }
 
-struct AgentStateRequest: Decodable {
+struct AgentStateRequest: Codable {
     let tool: String
     let arguments: AnyCodable?
     let createdAt: TimeInterval?
 }
 
-struct AgentStateCompletedRequest: Decodable {
+struct AgentStateCompletedRequest: Codable {
     let tool: String
     let arguments: AnyCodable?
     let createdAt: TimeInterval?
@@ -109,7 +161,7 @@ struct AgentStateCompletedRequest: Decodable {
     let decision: String?  // "approved"|"approved_for_session"|"denied"|"abort"
 }
 
-struct TodoItem: Decodable, Identifiable {
+struct TodoItem: Codable, Identifiable {
     let id: String
     let content: String
     let status: String   // "pending"|"in_progress"|"completed"
@@ -118,17 +170,24 @@ struct TodoItem: Decodable, Identifiable {
 
 // MARK: - Messages
 
-struct DecryptedMessage: Decodable, Identifiable {
+struct DecryptedMessage: Codable, Identifiable {
     let id: String
     let seq: Int?
     let localId: String?
     let content: AnyCodable?
     let createdAt: TimeInterval
+    var status: MessageStatus?
 
-    // Derived from content
+    var isOptimistic: Bool { localId != nil && id == localId }
+
+    // Derived from content — excluded from Codable via CodingKeys
     var parsedContent: MessageContent? {
         guard let raw = content?.value else { return nil }
         return MessageContent.parse(from: raw)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, seq, localId, content, createdAt, status
     }
 }
 
@@ -275,7 +334,7 @@ enum ContentBlock {
 
 // MARK: - Machine
 
-struct Machine: Decodable, Identifiable {
+struct Machine: Codable, Identifiable {
     let id: String
     let active: Bool
     let metadata: MachineMetadata?
@@ -285,14 +344,14 @@ struct Machine: Decodable, Identifiable {
     }
 }
 
-struct MachineMetadata: Decodable {
+struct MachineMetadata: Codable {
     let host: String
     let platform: String?
     let happyCliVersion: String?
     let displayName: String?
 }
 
-struct MachinesResponse: Decodable {
+struct MachinesResponse: Codable {
     let machines: [Machine]
 }
 
@@ -315,20 +374,20 @@ struct SpawnResponse: Decodable {
 
 // MARK: - API Response Wrappers
 
-struct SessionsResponse: Decodable {
+struct SessionsResponse: Codable {
     let sessions: [Session]
 }
 
-struct SessionResponse: Decodable {
+struct SessionResponse: Codable {
     let session: Session
 }
 
-struct MessagesResponse: Decodable {
+struct MessagesResponse: Codable {
     let messages: [DecryptedMessage]
     let page: MessagePage
 }
 
-struct MessagePage: Decodable {
+struct MessagePage: Codable {
     let limit: Int
     let beforeSeq: Int?
     let nextBeforeSeq: Int?
@@ -336,7 +395,25 @@ struct MessagePage: Decodable {
 }
 
 struct SendMessageRequest: Encodable {
-    let content: String
+    let text: String
+    let localId: String?
+    let attachments: [AttachmentMetadata]?
+}
+
+// MARK: - Slash Commands
+
+struct SlashCommand: Codable, Identifiable {
+    let name: String
+    let description: String?
+    let source: String          // "builtin" | "user" | "plugin"
+    let content: String?
+    let pluginName: String?
+    var id: String { name }
+}
+
+struct SlashCommandsResponse: Codable {
+    let success: Bool
+    let commands: [SlashCommand]?
 }
 
 // MARK: - SSE Events
@@ -368,8 +445,11 @@ enum SyncEvent {
         case "message-received":
             guard let sessionId = dict["sessionId"] as? String,
                   let msgDict = dict["message"],
-                  let msgData = try? JSONSerialization.data(withJSONObject: msgDict),
-                  let msg = try? JSONDecoder().decode(DecryptedMessage.self, from: msgData)
+                  let msgData = try? JSONSerialization.data(withJSONObject: msgDict)
+            else { return nil }
+            let msgDecoder = JSONDecoder()
+            msgDecoder.keyDecodingStrategy = .convertFromSnakeCase
+            guard let msg = try? msgDecoder.decode(DecryptedMessage.self, from: msgData)
             else { return nil }
             return .messageReceived(sessionId: sessionId, message: msg)
         case "machine-updated":

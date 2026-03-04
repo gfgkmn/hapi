@@ -1,11 +1,5 @@
 import SwiftUI
-
-private struct ScrollNearBottomKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
+import PhotosUI
 
 struct ChatView: View {
     @StateObject private var vm: ChatViewModel
@@ -13,9 +7,20 @@ struct ChatView: View {
     @State private var inputText = ""
     @State private var renameText = ""
     @State private var showingRename = false
+    @State private var showingSettings = false
+    @State private var showingFilePicker = false
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showSlashSuggestions = false
+    @State private var slashQuery = ""
+    @State private var selectedCommandIndex = 0
+    @State private var suppressSlashDetection = false
 
-    init(api: APIClient, sessionId: String) {
-        _vm = StateObject(wrappedValue: ChatViewModel(api: api, sessionId: sessionId))
+    init(api: APIClient, store: LocalStore, syncCoordinator: SyncCoordinator, sessionId: String) {
+        _vm = StateObject(wrappedValue: ChatViewModel(api: api, store: store, syncCoordinator: syncCoordinator, sessionId: sessionId))
+    }
+
+    private var sendDisabled: Bool {
+        (inputText.isEmpty && vm.attachments.isEmpty) || vm.isSending || vm.attachments.contains { $0.isUploading }
     }
 
     var body: some View {
@@ -29,28 +34,22 @@ struct ChatView: View {
                 )
             }
 
-            // Thinking indicator
-            if vm.session?.thinking == true {
-                HStack(spacing: 8) {
-                    ProgressView().scaleEffect(0.7)
-                    Text("Agent is thinking…")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial)
-            }
-
             // Message list
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 12) {
                         if vm.hasMore {
-                            Button("Load older messages") {
+                            Button {
                                 Task { await vm.loadOlder() }
+                            } label: {
+                                if vm.isLoadingOlder {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Text("Load older messages")
+                                }
                             }
+                            .disabled(vm.isLoadingOlder)
                             .font(.caption)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
@@ -58,59 +57,156 @@ struct ChatView: View {
 
                         ForEach(vm.messages) { message in
                             MessageBubbleView(message: message)
+                                .overlay(alignment: .bottomTrailing) {
+                                    if let status = message.status {
+                                        switch status {
+                                        case .sending:
+                                            ProgressView()
+                                                .scaleEffect(0.6)
+                                                .padding(4)
+                                        case .failed:
+                                            Image(systemName: "exclamationmark.circle.fill")
+                                                .font(.caption)
+                                                .foregroundStyle(.red)
+                                                .padding(4)
+                                        case .sent:
+                                            EmptyView()
+                                        }
+                                    }
+                                }
                                 .id(message.id)
                         }
 
-                        // Anchor for scroll-to-bottom and near-bottom detection
-                        GeometryReader { geo in
-                            Color.clear.preference(
-                                key: ScrollNearBottomKey.self,
-                                value: geo.frame(in: .named("chatScroll")).minY
-                            )
-                        }
-                        .frame(height: 1)
-                        .id("bottom_anchor")
+                        Color.clear.frame(height: 1).id("bottom_anchor")
                     }
                     .padding(.horizontal)
                     .padding(.top, 8)
                     .padding(.bottom, 4)
                 }
-                .coordinateSpace(name: "chatScroll")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .scrollDismissesKeyboard(.interactively)
                 .defaultScrollAnchor(.bottom)
-                .onPreferenceChange(ScrollNearBottomKey.self) { bottomY in
-                    // If the bottom anchor is within 120pt of the scroll view's visible area
-                    vm.isNearBottom = bottomY < UIScreen.main.bounds.height + 120
+                .onChange(of: vm.scrollToBottomTrigger) { _, _ in
+                    withAnimation { proxy.scrollTo("bottom_anchor", anchor: .bottom) }
                 }
-                .onChange(of: vm.messages.count) { _, _ in
-                    if vm.isNearBottom {
-                        withAnimation { proxy.scrollTo("bottom_anchor", anchor: .bottom) }
+                .onChange(of: vm.preserveScrollId) { _, id in
+                    if let id {
+                        proxy.scrollTo(id, anchor: .top)
+                        vm.preserveScrollId = nil
                     }
                 }
             }
 
             Divider()
 
-            // Input bar
-            HStack(alignment: .bottom, spacing: 8) {
+            // Input area
+            VStack(spacing: 6) {
+                ConnectionStatusBar(
+                    isConnected: vm.isConnected,
+                    isThinking: vm.session?.thinking == true,
+                    hasPendingRequests: !(vm.session?.pendingRequests.isEmpty ?? true)
+                )
+
+                if !vm.attachments.isEmpty {
+                    AttachmentPreviewRow(
+                        attachments: vm.attachments,
+                        onRemove: { id in Task { await vm.removeAttachment(id: id) } }
+                    )
+                }
+
+                if showSlashSuggestions {
+                    let commands = vm.filteredCommands(for: slashQuery)
+                    if !commands.isEmpty {
+                        SlashCommandPopup(
+                            commands: commands,
+                            selectedIndex: selectedCommandIndex,
+                            onSelect: { cmd in
+                                suppressSlashDetection = true
+                                inputText = "/\(cmd.name)"
+                                showSlashSuggestions = false
+                            }
+                        )
+                    }
+                }
+
                 TextField("Message…", text: $inputText, axis: .vertical)
                     .textFieldStyle(.plain)
                     .lineLimit(1...6)
                     .padding(10)
                     .background(Color(.systemGray6))
                     .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .onChange(of: inputText) { _, newValue in
+                        if suppressSlashDetection {
+                            suppressSlashDetection = false
+                            return
+                        }
+                        if newValue.hasPrefix("/") && !newValue.contains(" ") && !newValue.contains("\n") {
+                            slashQuery = String(newValue.dropFirst())
+                            showSlashSuggestions = true
+                            selectedCommandIndex = 0
+                        } else {
+                            showSlashSuggestions = false
+                        }
+                    }
 
-                Button {
-                    let text = inputText
-                    inputText = ""
-                    Task { await vm.send(text: text) }
-                } label: {
-                    Image(systemName: vm.isSending ? "ellipsis.circle" : "arrow.up.circle.fill")
-                        .font(.system(size: 30))
-                        .foregroundStyle(inputText.isEmpty ? .gray : .blue)
+                HStack(spacing: 16) {
+                    // Attach button
+                    Menu {
+                        PhotosPicker(selection: $selectedPhoto, matching: .any(of: [.images, .screenshots])) {
+                            Label("Photo Library", systemImage: "photo")
+                        }
+                        Button {
+                            showingFilePicker = true
+                        } label: {
+                            Label("Choose File", systemImage: "folder")
+                        }
+                    } label: {
+                        Image(systemName: "paperclip")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Gear (settings) button
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Abort button
+                    if vm.session?.active == true {
+                        Button {
+                            Task { await vm.abort() }
+                        } label: {
+                            if vm.isAborting {
+                                ProgressView()
+                                    .scaleEffect(0.7)
+                            } else {
+                                Image(systemName: "stop.circle")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                        .disabled(vm.isAborting)
+                    }
+
+                    Spacer()
+
+                    // Send button
+                    Button {
+                        let text = inputText
+                        inputText = ""
+                        vm.handleLocalCommand(text)
+                        Task { await vm.send(text: text) }
+                    } label: {
+                        Image(systemName: vm.isSending ? "ellipsis.circle" : "arrow.up.circle.fill")
+                            .font(.system(size: 30))
+                            .foregroundStyle(sendDisabled ? .gray : .blue)
+                    }
+                    .disabled(sendDisabled)
                 }
-                .disabled(inputText.isEmpty || vm.isSending)
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
@@ -122,9 +218,7 @@ struct ChatView: View {
                 Menu {
                     if vm.session?.active == true {
                         Button(role: .destructive) {
-                            Task {
-                                // No abort in ChatViewModel directly, handled via session action
-                            }
+                            Task { await vm.abort() }
                         } label: {
                             Label("Stop Agent", systemImage: "stop.circle")
                         }
@@ -147,13 +241,38 @@ struct ChatView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
-        .task { await vm.load() }
-        .onAppear {
-            if let token = appState.apiClient.map({ _ in appState.tokenManager.jwt }) {
-                vm.startSSE(token: token)
+        .sheet(isPresented: $showingSettings) {
+            SessionSettingsSheet(
+                currentPermissionMode: vm.session?.permissionMode,
+                currentModelMode: vm.session?.modelMode,
+                onSetPermissionMode: { mode in Task { await vm.setPermissionMode(mode) } },
+                onSetModelMode: { model in Task { await vm.setModelMode(model) } }
+            )
+        }
+        .fileImporter(isPresented: $showingFilePicker, allowedContentTypes: [.item], allowsMultipleSelection: false) { result in
+            if case .success(let urls) = result, let url = urls.first {
+                Task { await vm.addAttachment(url: url) }
             }
         }
-        .onDisappear { vm.stopSSE() }
+        .onChange(of: selectedPhoto) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                if let data = try? await newItem.loadTransferable(type: Data.self) {
+                    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("photo_\(UUID().uuidString).jpg")
+                    try? data.write(to: tempURL)
+                    await vm.addAttachment(url: tempURL)
+                }
+                selectedPhoto = nil
+            }
+        }
+        .task {
+            await vm.load()
+            vm.startPolling()
+            await vm.loadSlashCommands()
+        }
+        .onDisappear {
+            vm.unload()
+        }
     }
 }
 
@@ -339,15 +458,57 @@ struct AssistantBubbles: View {
 struct ToolUseView: View {
     let name: String
     let input: Any
-    @State private var isExpanded = false
+
+    private var toolIcon: String {
+        switch name.lowercased() {
+        case "bash", "shell": return "terminal"
+        case "task": return "arrow.triangle.branch"
+        case "read": return "doc.text"
+        case "write", "edit": return "pencil.line"
+        case "glob": return "magnifyingglass"
+        case "grep": return "text.magnifyingglass"
+        default: return "wrench.and.screwdriver"
+        }
+    }
+
+    private var toolColor: Color {
+        switch name.lowercased() {
+        case "bash", "shell": return .blue
+        case "task": return .purple
+        case "read": return .green
+        case "write", "edit": return .orange
+        case "glob", "grep": return .teal
+        default: return .secondary
+        }
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Label(name, systemImage: "wrench.and.screwdriver")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 0) {
+            // Tool name header
+            Label(name, systemImage: toolIcon)
+                .font(.caption.bold())
+                .foregroundStyle(toolColor)
+                .padding(.bottom, 6)
+
+            // Command / input summary
             if let summary = inputSummary {
-                MonoBlockView(text: summary, defaultExpanded: summary.count < 200)
+                HStack(spacing: 0) {
+                    // Accent left border
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .fill(toolColor.opacity(0.5))
+                        .frame(width: 3)
+
+                    Text(summary.count > 500 ? String(summary.prefix(500)) + "…" : summary)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.primary)
+                        .lineLimit(summary.count < 200 ? nil : 4)
+                        .textSelection(.enabled)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(toolColor.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
             }
         }
         .padding(.vertical, 2)
@@ -355,11 +516,8 @@ struct ToolUseView: View {
 
     private var inputSummary: String? {
         guard let dict = input as? [String: Any] else { return nil }
-        // Bash: show command
         if let cmd = dict["command"] as? String { return cmd }
-        // File operations: show path (key may be camelCased by decoder)
         if let path = dict["filePath"] as? String ?? dict["file_path"] as? String { return path }
-        // Search: show pattern
         if let pattern = dict["pattern"] as? String { return pattern }
         return nil
     }
@@ -497,24 +655,22 @@ struct MarkdownTextView: View {
     }
 }
 
-// MARK: - MonoBlockView (shared monospace block with wrap toggle)
+// MARK: - MonoBlockView (fenced code blocks in markdown)
 
 struct MonoBlockView: View {
     let text: String
-    var font: Font = .callout.monospaced()
+    var font: Font = .caption.monospaced()
     var defaultExpanded: Bool = true
-    @State private var wrapText = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if defaultExpanded {
-                content
+                codeContent
             } else {
-                // Collapsible for long content
                 DisclosureGroup {
-                    content.padding(.top, 4)
+                    codeContent.padding(.top, 4)
                 } label: {
-                    Text(String(text.prefix(60)).replacingOccurrences(of: "\n", with: " "))
+                    Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
                         .font(font)
                         .lineLimit(1)
                         .foregroundStyle(.secondary)
@@ -527,35 +683,11 @@ struct MonoBlockView: View {
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
-    private var content: some View {
-        VStack(alignment: .trailing, spacing: 4) {
-            Button {
-                wrapText.toggle()
-            } label: {
-                Image(systemName: wrapText ? "arrow.left.and.right" : "text.justify.left")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(6)
-                    .background(Color(.systemGray5))
-                    .clipShape(Circle())
-            }
-            .frame(maxWidth: .infinity, alignment: .trailing)
-
-            Group {
-                if wrapText {
-                    Text(text)
-                        .font(font)
-                        .textSelection(.enabled)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: true) {
-                        Text(text)
-                            .font(font)
-                            .textSelection(.enabled)
-                    }
-                }
-            }
+    private var codeContent: some View {
+        Text(text)
+            .font(font)
+            .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
     }
 }
 
@@ -582,19 +714,45 @@ struct ReasoningBubble: View {
     }
 }
 
-// MARK: - Tool Result (expandable)
+// MARK: - Tool Result (output)
 
 struct ToolResultView: View {
     let content: Any
 
     var body: some View {
-        let text = Self.extractText(from: content)
-        if !text.isEmpty {
-            MonoBlockView(
-                text: String(text.prefix(10000)),
-                font: .caption.monospaced(),
-                defaultExpanded: text.count < 300
-            )
+        let raw = Self.extractText(from: content)
+        if !raw.isEmpty {
+            let parsed = Self.parsePersistedOutput(raw)
+            if parsed.isPersisted {
+                // Persisted output: show compact info chip
+                DisclosureGroup {
+                    if let inner = parsed.text {
+                        Text(inner.count > 10000 ? String(inner.prefix(10000)) + "…" : inner)
+                            .font(.caption2.monospaced())
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 4)
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.on.clipboard")
+                            .font(.caption2)
+                        Text(parsed.summary ?? "Large output (stored)")
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(.secondary)
+                }
+                .padding(8)
+                .background(Color(.systemGray6).opacity(0.6))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            } else {
+                // Normal output: smaller, dimmer, collapsed if long
+                OutputBlockView(
+                    text: String(raw.prefix(10000)),
+                    collapsed: raw.count > 300
+                )
+            }
         }
     }
 
@@ -604,5 +762,79 @@ struct ToolResultView: View {
             return blocks.compactMap { $0["text"] as? String }.joined(separator: "\n")
         }
         return ""
+    }
+
+    private struct PersistedResult {
+        let isPersisted: Bool
+        let summary: String?
+        let text: String?
+    }
+
+    private static func parsePersistedOutput(_ text: String) -> PersistedResult {
+        // Match <persisted-output> ... </persisted-output> or just <persisted-output>...
+        if text.contains("<persisted-output>") || text.contains("persisted-output") {
+            // Try to extract content between tags
+            if let regex = try? NSRegularExpression(
+                pattern: "<persisted-output>(.*?)(?:</persisted-output>|$)",
+                options: .dotMatchesLineSeparators
+            ) {
+                let nsRange = NSRange(text.startIndex..., in: text)
+                if let match = regex.firstMatch(in: text, range: nsRange),
+                   let range = Range(match.range(at: 1), in: text) {
+                    let inner = String(text[range]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    // Extract summary like "Output too large (271KB). ..."
+                    let summary = inner.components(separatedBy: "\n").first?
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                    return PersistedResult(isPersisted: true, summary: summary?.isEmpty == true ? nil : summary, text: inner)
+                }
+            }
+            // Tag present but couldn't parse inner — still treat as persisted
+            let cleaned = text
+                .replacingOccurrences(of: "<persisted-output>", with: "")
+                .replacingOccurrences(of: "</persisted-output>", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let summary = cleaned.components(separatedBy: "\n").first
+            return PersistedResult(isPersisted: true, summary: summary, text: cleaned.isEmpty ? nil : cleaned)
+        }
+        return PersistedResult(isPersisted: false, summary: nil, text: nil)
+    }
+}
+
+// MARK: - Output Block (tool result display)
+
+private struct OutputBlockView: View {
+    let text: String
+    let collapsed: Bool
+
+    var body: some View {
+        if collapsed {
+            DisclosureGroup {
+                outputContent
+                    .padding(.top, 4)
+            } label: {
+                Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
+                    .font(.caption2.monospaced())
+                    .lineLimit(1)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.systemGray6).opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+        } else {
+            outputContent
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.systemGray6).opacity(0.6))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+        }
+    }
+
+    private var outputContent: some View {
+        Text(text)
+            .font(.caption2.monospaced())
+            .foregroundStyle(.secondary)
+            .textSelection(.enabled)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
