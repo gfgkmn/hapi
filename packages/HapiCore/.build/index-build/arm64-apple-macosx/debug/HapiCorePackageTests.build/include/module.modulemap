@@ -1,0 +1,3 @@
+module HapiCorePackageTests {
+    header "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/include/HapiCorePackageTests-Swift.h"
+}

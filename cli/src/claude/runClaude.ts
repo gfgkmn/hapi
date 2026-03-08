@@ -260,6 +260,60 @@ export async function runClaude(options: StartOptions = {}): Promise<void> {
             return;
         }
 
+        // Handle /status — respond immediately without sending to Claude
+        if (specialCommand.type === 'status') {
+            logger.debug('[start] Detected /status command');
+            const si = currentSessionRef.current;
+            const usage = si?.cumulativeUsage;
+            const lines = [
+                `Session: ${sessionInfo.id}`,
+                `Path: ${workingDirectory}`,
+                `Mode: ${si?.mode ?? startingMode}`,
+                `Permission: ${currentPermissionMode}`,
+                `Model: ${currentModelMode}`,
+                `Agent: claude`,
+                `Started by: ${startedBy}`,
+                `Cumulative cost: $${(usage?.costUsd ?? 0).toFixed(4)}`,
+                `Turns: ${usage?.turns ?? 0}`,
+            ];
+            session.sendSessionEvent({ type: 'message', message: lines.join('\n') });
+            return;
+        }
+
+        // Handle /cost — respond immediately with accumulated cost
+        if (specialCommand.type === 'cost') {
+            logger.debug('[start] Detected /cost command');
+            const usage = currentSessionRef.current?.cumulativeUsage;
+            const lines = [
+                `Session cost: $${(usage?.costUsd ?? 0).toFixed(4)}`,
+                `Total turns: ${usage?.turns ?? 0}`,
+                `Total input tokens: ${usage?.inputTokens ?? 0}`,
+                `Total output tokens: ${usage?.outputTokens ?? 0}`,
+            ];
+            if ((usage?.cacheReadTokens ?? 0) > 0) {
+                lines.push(`Cache read tokens: ${usage!.cacheReadTokens}`);
+            }
+            if ((usage?.cacheCreationTokens ?? 0) > 0) {
+                lines.push(`Cache creation tokens: ${usage!.cacheCreationTokens}`);
+            }
+            session.sendSessionEvent({ type: 'message', message: lines.join('\n') });
+            return;
+        }
+
+        // Handle /plan — toggle plan mode
+        if (specialCommand.type === 'plan') {
+            logger.debug('[start] Detected /plan command');
+            if (currentPermissionMode === 'plan') {
+                currentPermissionMode = 'default';
+                session.sendSessionEvent({ type: 'message', message: 'Plan mode disabled. Switched to default mode.' });
+            } else {
+                currentPermissionMode = 'plan';
+                session.sendSessionEvent({ type: 'message', message: 'Plan mode enabled. Claude will create a plan before executing.' });
+            }
+            syncSessionModes();
+            return;
+        }
+
         // Push with resolved permission mode, model, system prompts, and tools
         const enhancedMode: EnhancedMode = {
             permissionMode: messagePermissionMode ?? 'default',

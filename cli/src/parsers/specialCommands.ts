@@ -12,7 +12,7 @@ export interface ClearCommandResult {
 }
 
 export interface SpecialCommandResult {
-    type: 'compact' | 'clear' | null;
+    type: 'compact' | 'clear' | 'status' | 'cost' | 'plan' | null;
     originalMessage?: string;
 }
 
@@ -74,7 +74,18 @@ export function parseSpecialCommand(message: string): SpecialCommandResult {
             type: 'clear'
         };
     }
-    
+
+    const trimmed = message.trim();
+    if (trimmed === '/status') {
+        return { type: 'status' };
+    }
+    if (trimmed === '/cost') {
+        return { type: 'cost' };
+    }
+    if (trimmed === '/plan') {
+        return { type: 'plan' };
+    }
+
     return {
         type: null
     };

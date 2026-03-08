@@ -27,6 +27,9 @@
 		B00017C3D4E5F6A7B /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00017A1B2C3D4E5F /* SyncCoordinator.swift */; };
 		B00018C3D4E5F6A7B /* InputBarComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00018A1B2C3D4E5F /* InputBarComponents.swift */; };
 		61650E172F4EEA4000F71A3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61650E162F4EEA4000F71A3B /* Assets.xcassets */; };
+
+		EAD7BC10F24A092CDD40B47C /* FZJuZXFK.TTF in Resources */ = {isa = PBXBuildFile; fileRef = F68DA1BD932C329351FC164E /* FZJuZXFK.TTF */; };
+		0786C7E7E33E967E075E6757 /* FontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA6C5805B5E4DEEE0935958 /* FontSettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +54,10 @@
 		B00016A1B2C3D4E5F /* LocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStore.swift; sourceTree = "<group>"; };
 		B00017A1B2C3D4E5F /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		B00018A1B2C3D4E5F /* InputBarComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputBarComponents.swift; sourceTree = "<group>"; };
+
+		F68DA1BD932C329351FC164E /* FZJuZXFK.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FZJuZXFK.TTF; sourceTree = "<group>"; };
+		CEA6C5805B5E4DEEE0935958 /* FontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSettings.swift; sourceTree = "<group>"; };
+		D2308A8F58C6909BB19F9ED9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -58,6 +65,8 @@
 			isa = PBXGroup;
 			children = (
 				61650E162F4EEA4000F71A3B /* Assets.xcassets */,
+				5C8B0D767452D9624ABE864A /* Fonts */,
+				D2308A8F58C6909BB19F9ED9 /* Info.plist */,
 				A1B2C3D4E5F6A7B8C9D0E1F4 /* Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F5 /* Products */,
 			);
@@ -127,6 +136,7 @@
 		C5B2C3D4E5F6A7B8C9D0E1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				CEA6C5805B5E4DEEE0935958 /* FontSettings.swift */,
 				B00009A1B2C3D4E5F /* ChatView.swift */,
 				B00010A1B2C3D4E5F /* ContentView.swift */,
 				B00013A1B2C3D4E5F /* CreateSessionView.swift */,
@@ -146,6 +156,15 @@
 			path = Storage;
 			sourceTree = "<group>";
 		};
+
+		5C8B0D767452D9624ABE864A /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				F68DA1BD932C329351FC164E /* FZJuZXFK.TTF */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -154,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61650E172F4EEA4000F71A3B /* Assets.xcassets in Resources */,
+				EAD7BC10F24A092CDD40B47C /* FZJuZXFK.TTF in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B00000C3D4E5F6A7B /* HapiClientApp.swift in Sources */,
+				0786C7E7E33E967E075E6757 /* FontSettings.swift in Sources */,
 				B00001C3D4E5F6A7B /* Models.swift in Sources */,
 				B00002C3D4E5F6A7B /* APIClient.swift in Sources */,
 				B00003C3D4E5F6A7B /* SSEClient.swift in Sources */,
@@ -300,6 +321,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48225U96G4;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HapiClient/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
@@ -322,6 +344,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 48225U96G4;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HapiClient/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;

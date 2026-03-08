@@ -1,0 +1,12 @@
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift
+/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift

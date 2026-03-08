@@ -22,3 +22,10 @@ jobs:
                       echo "HAPI_DAEMON_HEARTBEAT_INTERVAL=30000"
                   } > cli/.env.integration-test
             - run: bun run test
+
+    swift-test:
+        runs-on: macos-15
+        steps:
+            - uses: actions/checkout@v4
+            - name: HapiCore unit tests
+              run: cd packages/HapiCore && swift test

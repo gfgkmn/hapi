@@ -86,6 +86,7 @@ struct ChatView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .scrollDismissesKeyboard(.interactively)
                 .defaultScrollAnchor(.bottom)
+                .geometryGroup()
                 .onChange(of: vm.scrollToBottomTrigger) { _, _ in
                     withAnimation { proxy.scrollTo("bottom_anchor", anchor: .bottom) }
                 }
@@ -198,8 +199,7 @@ struct ChatView: View {
                     Button {
                         let text = inputText
                         inputText = ""
-                        vm.handleLocalCommand(text)
-                        Task { await vm.send(text: text) }
+                        Task { await vm.executeCommand(text) }
                     } label: {
                         Image(systemName: vm.isSending ? "ellipsis.circle" : "arrow.up.circle.fill")
                             .font(.system(size: 30))
@@ -285,38 +285,147 @@ struct PermissionBannerView: View {
 
     var body: some View {
         let requestIds = Array(requests.keys)
-        
+
         VStack(alignment: .leading, spacing: 0) {
             ForEach(requestIds, id: \.self) { requestId in
                 if let req = requests[requestId] {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Permission required")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                            Text(req.tool)
-                                .font(.callout)
-                                .bold()
-                        }
-                        Spacer()
-                        Button("Deny") { onDeny(requestId) }
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
-                            .tint(.red)
-                        Button("Approve") { onApprove(requestId) }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
+                    PermissionRequestCard(
+                        req: req,
+                        onApprove: { onApprove(requestId) },
+                        onDeny: { onDeny(requestId) }
+                    )
                     if requestId != requestIds.last {
-                        Divider()
+                        Divider().padding(.horizontal, 12)
                     }
                 }
             }
         }
-        .background(Color.orange.opacity(0.12))
-        .overlay(alignment: .bottom) { Divider() }
+        .background(Color.orange.opacity(0.06))
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.orange.opacity(0.5)).frame(height: 2)
+        }
+    }
+}
+
+private struct PermissionRequestCard: View {
+    let req: AgentStateRequest
+    let onApprove: () -> Void
+    let onDeny: () -> Void
+
+    private var toolIcon: String {
+        switch req.tool.lowercased() {
+        case "bash", "shell": return "terminal"
+        case "read": return "doc.text"
+        case "write", "edit": return "pencil.line"
+        case "glob": return "magnifyingglass"
+        case "grep": return "text.magnifyingglass"
+        case "agent": return "person.2"
+        case "task": return "arrow.triangle.branch"
+        default: return "wrench.and.screwdriver"
+        }
+    }
+
+    private var toolColor: Color {
+        switch req.tool.lowercased() {
+        case "bash", "shell": return .blue
+        case "read": return .green
+        case "write", "edit": return .orange
+        case "glob", "grep": return .teal
+        default: return .secondary
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Header
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.shield.fill")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.orange)
+                Text("Permission required")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            // Tool info
+            HStack(spacing: 0) {
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(toolColor.opacity(0.6))
+                    .frame(width: 3)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Image(systemName: toolIcon)
+                            .font(.caption)
+                            .foregroundStyle(toolColor)
+                        Text(req.tool)
+                            .font(.callout.bold())
+                    }
+
+                    if let summary = argumentsSummary {
+                        Text(summary)
+                            .font(.caption.monospaced())
+                            .foregroundStyle(.primary.opacity(0.8))
+                            .lineLimit(4)
+                            .textSelection(.enabled)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(toolColor.opacity(0.06))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            // Buttons
+            HStack(spacing: 8) {
+                Spacer()
+                Button {
+                    onDeny()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark")
+                            .font(.caption2)
+                        Text("Deny")
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .tint(.red)
+
+                Button {
+                    onApprove()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark")
+                            .font(.caption2)
+                        Text("Allow")
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .tint(.green)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+    }
+
+    private var argumentsSummary: String? {
+        guard let args = req.arguments?.value as? [String: Any] else { return nil }
+        if let cmd = args["command"] as? String { return cmd }
+        if let path = args["filePath"] as? String ?? args["file_path"] as? String {
+            if let oldStr = args["old_string"] as? String ?? args["oldString"] as? String {
+                return "\(path)\n- \(String(oldStr.prefix(200)))"
+            }
+            return path
+        }
+        if let pattern = args["pattern"] as? String {
+            let path = args["path"] as? String
+            return path != nil ? "\(pattern) in \(path!)" : pattern
+        }
+        if let prompt = args["prompt"] as? String { return String(prompt.prefix(200)) }
+        return nil
     }
 }
 
@@ -348,6 +457,7 @@ struct MessageBubbleView: View {
 
 struct UserBubble: View {
     let text: String
+    @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
         if text.hasPrefix("<local-command-caveat>") {
@@ -371,7 +481,7 @@ struct UserBubble: View {
                 Image(systemName: "terminal")
                     .font(.caption)
                 Text(Self.extractTag(text, "command-name") ?? Self.stripTags(text))
-                    .font(.callout.monospaced())
+                    .font(fs.codeFont)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
@@ -388,7 +498,7 @@ struct UserBubble: View {
         return HStack {
             Spacer(minLength: 60)
             Text(output)
-                .font(.caption.monospaced())
+                .font(fs.smallCodeFont)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(Color(.systemGray5))
@@ -401,6 +511,7 @@ struct UserBubble: View {
         HStack {
             Spacer(minLength: 60)
             Text(content)
+                .font(fs.bodyFont)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(Color.blue)
@@ -458,6 +569,7 @@ struct AssistantBubbles: View {
 struct ToolUseView: View {
     let name: String
     let input: Any
+    @EnvironmentObject private var fs: FontSettings
 
     private var toolIcon: String {
         switch name.lowercased() {
@@ -499,9 +611,9 @@ struct ToolUseView: View {
                         .frame(width: 3)
 
                     Text(summary.count > 500 ? String(summary.prefix(500)) + "…" : summary)
-                        .font(.caption.monospaced())
+                        .font(fs.codeFont)
                         .foregroundStyle(.primary)
-                        .lineLimit(summary.count < 200 ? nil : 4)
+                        .lineLimit(summary.count < 200 ? nil : 6)
                         .textSelection(.enabled)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
@@ -527,6 +639,7 @@ struct ToolUseView: View {
 
 struct MarkdownTextView: View {
     let text: String
+    @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -537,7 +650,7 @@ struct MarkdownTextView: View {
                 case .table:
                     ScrollView(.horizontal, showsIndicators: false) {
                         Text(seg.content)
-                            .font(.callout.monospaced())
+                            .font(fs.codeFont)
                             .textSelection(.enabled)
                     }
                     .padding(8)
@@ -559,9 +672,9 @@ struct MarkdownTextView: View {
                 markdown: trimmed,
                 options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
             ) {
-                Text(attr).font(.body)
+                Text(attr).font(fs.bodyFont)
             } else {
-                Text(trimmed).font(.body)
+                Text(trimmed).font(fs.bodyFont)
             }
         }
     }
@@ -659,8 +772,8 @@ struct MarkdownTextView: View {
 
 struct MonoBlockView: View {
     let text: String
-    var font: Font = .caption.monospaced()
     var defaultExpanded: Bool = true
+    @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -671,7 +784,7 @@ struct MonoBlockView: View {
                     codeContent.padding(.top, 4)
                 } label: {
                     Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
-                        .font(font)
+                        .font(fs.smallCodeFont)
                         .lineLimit(1)
                         .foregroundStyle(.secondary)
                 }
@@ -685,7 +798,7 @@ struct MonoBlockView: View {
 
     private var codeContent: some View {
         Text(text)
-            .font(font)
+            .font(fs.codeFont)
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -695,12 +808,13 @@ struct MonoBlockView: View {
 
 struct ReasoningBubble: View {
     let text: String
+    @EnvironmentObject private var fs: FontSettings
     @State private var isExpanded = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             Text(text)
-                .font(.callout)
+                .font(fs.bodyFont)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
         } label: {
@@ -718,6 +832,7 @@ struct ReasoningBubble: View {
 
 struct ToolResultView: View {
     let content: Any
+    @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
         let raw = Self.extractText(from: content)
@@ -728,7 +843,7 @@ struct ToolResultView: View {
                 DisclosureGroup {
                     if let inner = parsed.text {
                         Text(inner.count > 10000 ? String(inner.prefix(10000)) + "…" : inner)
-                            .font(.caption2.monospaced())
+                            .font(fs.smallCodeFont)
                             .foregroundStyle(.secondary)
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -805,6 +920,7 @@ struct ToolResultView: View {
 private struct OutputBlockView: View {
     let text: String
     let collapsed: Bool
+    @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
         if collapsed {
@@ -813,7 +929,7 @@ private struct OutputBlockView: View {
                     .padding(.top, 4)
             } label: {
                 Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
-                    .font(.caption2.monospaced())
+                    .font(fs.smallCodeFont)
                     .lineLimit(1)
                     .foregroundStyle(.secondary)
             }
@@ -832,7 +948,7 @@ private struct OutputBlockView: View {
 
     private var outputContent: some View {
         Text(text)
-            .font(.caption2.monospaced())
+            .font(fs.smallCodeFont)
             .foregroundStyle(.secondary)
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)

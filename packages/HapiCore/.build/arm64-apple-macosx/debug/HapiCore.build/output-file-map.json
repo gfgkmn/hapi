@@ -1,0 +1,89 @@
+{
+  "": {
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/master.swiftdeps"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Models.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Models.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Models~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Models.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Models.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/APIClient.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/APIClient.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/APIClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/APIClient.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/APIClient.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SSEClient.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SSEClient.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SSEClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SSEClient.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SSEClient.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/LocalStore.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/LocalStore.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/LocalStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/LocalStore.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/LocalStore.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Keychain.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Keychain.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Keychain~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Keychain.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/Keychain.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/TokenManager.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/TokenManager.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/TokenManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/TokenManager.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/TokenManager.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/AppState.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/AppState.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/AppState~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/AppState.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/AppState.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel.dia"
+  }
+}

@@ -4,7 +4,7 @@ import { RemoteModeDisplay } from "@/ui/ink/RemoteModeDisplay";
 import { claudeRemote } from "./claudeRemote";
 import { PermissionHandler } from "./utils/permissionHandler";
 import { Future } from "@/utils/future";
-import { SDKAssistantMessage, SDKMessage, SDKUserMessage } from "./sdk";
+import { SDKAssistantMessage, SDKMessage, SDKResultMessage, SDKUserMessage } from "./sdk";
 import { formatClaudeMessageForInk } from "@/ui/messageFormatterInk";
 import { logger } from "@/ui/logger";
 import { SDKToLogConverter } from "./utils/sdkToLogConverter";
@@ -120,6 +120,12 @@ class ClaudeRemoteLauncher extends RemoteLauncherBase {
         function onMessage(message: SDKMessage) {
             formatClaudeMessageForInk(message, messageBuffer);
             permissionHandler.onMessage(message);
+
+            // Track cumulative cost from result messages
+            if (message.type === 'result') {
+                const result = message as SDKResultMessage;
+                session.accumulateUsage(result);
+            }
 
             if (message.type === 'assistant') {
                 let umessage = message as SDKAssistantMessage;

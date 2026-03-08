@@ -12,6 +12,15 @@ type LocalLaunchFailure = {
     exitReason: LocalLaunchExitReason;
 };
 
+export interface CumulativeUsage {
+    costUsd: number;
+    turns: number;
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheCreationTokens: number;
+}
+
 export class Session extends AgentSessionBase<EnhancedMode> {
     readonly claudeEnvVars?: Record<string, string>;
     claudeArgs?: string[];
@@ -21,6 +30,10 @@ export class Session extends AgentSessionBase<EnhancedMode> {
     readonly startedBy: 'runner' | 'terminal';
     readonly startingMode: 'local' | 'remote';
     localLaunchFailure: LocalLaunchFailure | null = null;
+    readonly cumulativeUsage: CumulativeUsage = {
+        costUsd: 0, turns: 0, inputTokens: 0, outputTokens: 0,
+        cacheReadTokens: 0, cacheCreationTokens: 0
+    };
 
     constructor(opts: {
         api: ApiClient;
@@ -77,6 +90,26 @@ export class Session extends AgentSessionBase<EnhancedMode> {
 
     setModelMode = (mode: SessionModelMode): void => {
         this.modelMode = mode;
+    };
+
+    accumulateUsage = (result: {
+        total_cost_usd: number;
+        num_turns: number;
+        usage?: {
+            input_tokens: number;
+            output_tokens: number;
+            cache_read_input_tokens?: number;
+            cache_creation_input_tokens?: number;
+        };
+    }): void => {
+        this.cumulativeUsage.costUsd += result.total_cost_usd;
+        this.cumulativeUsage.turns += result.num_turns;
+        if (result.usage) {
+            this.cumulativeUsage.inputTokens += result.usage.input_tokens;
+            this.cumulativeUsage.outputTokens += result.usage.output_tokens;
+            this.cumulativeUsage.cacheReadTokens += result.usage.cache_read_input_tokens ?? 0;
+            this.cumulativeUsage.cacheCreationTokens += result.usage.cache_creation_input_tokens ?? 0;
+        }
     };
 
     recordLocalLaunchFailure = (message: string, exitReason: LocalLaunchExitReason): void => {

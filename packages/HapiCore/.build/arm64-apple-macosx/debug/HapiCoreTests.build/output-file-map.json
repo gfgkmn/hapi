@@ -1,0 +1,26 @@
+{
+  "": {
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/master.swiftdeps"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/ChatViewModelIntegrationTests.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/MessageMergerTests.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests.dia"
+  },
+  "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/SyncEventParseTests.swift": {
+    "dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests.d",
+    "object": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests.swift.o",
+    "swiftmodule": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests.swiftdeps",
+    "diagnostics": "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests.dia"
+  }
+}

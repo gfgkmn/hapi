@@ -1,0 +1,3 @@
+module HapiCore {
+    header "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/arm64-apple-macosx/debug/HapiCore.build/include/HapiCore-Swift.h"
+}

@@ -1,0 +1,773 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.xctest/Contents/MacOS/HapiCorePackageTests",
+      "packagePath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore",
+      "productName" : "HapiCorePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.HapiCore-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/sources",
+      "importPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "HapiCore",
+      "moduleOutputPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCore.swiftmodule",
+      "objects" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/MessageStatus.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/Models.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/APIClient.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/SSEClient.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/SyncCoordinator.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/LocalStore.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/MessageMerger.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/Keychain.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/TokenManager.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/AppState.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/ChatViewModel.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/SessionsViewModel.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/include/HapiCore-Swift.h",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "hapicore"
+      ],
+      "outputFileMapPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift"
+      ],
+      "tempsPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.HapiCorePackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/sources",
+      "importPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCoreTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "HapiCorePackageTests",
+      "moduleOutputPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCorePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/include/HapiCorePackageTests-Swift.h",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "hapicore"
+      ],
+      "outputFileMapPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCorePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.HapiCoreTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/sources",
+      "importPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/ChatViewModelIntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/MessageMergerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/SyncEventParseTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "HapiCoreTests",
+      "moduleOutputPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCoreTests.swiftmodule",
+      "objects" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/ChatViewModelIntegrationTests.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/MessageMergerTests.swift.o",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/SyncEventParseTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "hapicore"
+      ],
+      "outputFileMapPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules/HapiCoreTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/ChatViewModelIntegrationTests.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/MessageMergerTests.swift",
+        "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/SyncEventParseTests.swift"
+      ],
+      "tempsPath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "HapiCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "HapiCore",
+      "-package-name",
+      "hapicore",
+      "-c",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift",
+      "-I",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/include/HapiCore-Swift.h",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "hapicore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "HapiCorePackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "HapiCorePackageTests",
+      "-package-name",
+      "hapicore",
+      "-c",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/include/HapiCorePackageTests-Swift.h",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "hapicore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "HapiCoreTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "HapiCoreTests",
+      "-package-name",
+      "hapicore",
+      "-c",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/ChatViewModelIntegrationTests.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/MessageMergerTests.swift",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/SyncEventParseTests.swift",
+      "-I",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "hapicore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "HapiCore" : [
+
+    ],
+    "HapiCorePackageTests" : [
+      "HapiCoreTests",
+      "HapiCore"
+    ],
+    "HapiCoreTests" : [
+      "HapiCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/MessageStatus.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Models/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/APIClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SSEClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Networking/SyncCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/LocalStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Storage/MessageMerger.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/Keychain.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/Utilities/TokenManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/AppState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/ChatViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Sources/HapiCore/ViewModels/SessionsViewModel.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCore.build/sources"
+    },
+    "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCorePackageTests.build/sources"
+    },
+    "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/ChatViewModelIntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/MessageMergerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/Tests/HapiCoreTests/SyncEventParseTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/HapiCoreTests.build/sources"
+    },
+    "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/gfgkmn/Coding/hapi/packages/HapiCore/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

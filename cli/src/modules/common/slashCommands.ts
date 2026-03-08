@@ -9,6 +9,7 @@ export interface SlashCommand {
     source: 'builtin' | 'user' | 'plugin' | 'project';
     content?: string;  // Expanded content for Codex user prompts
     pluginName?: string;  // Name of the plugin that provides this command
+    routing?: string;  // "local" | "remote" — clients use this to decide handling
 }
 
 export interface ListSlashCommandsRequest {
@@ -26,11 +27,12 @@ export interface ListSlashCommandsResponse {
  */
 const BUILTIN_COMMANDS: Record<string, SlashCommand[]> = {
     claude: [
-        { name: 'clear', description: 'Clear conversation history', source: 'builtin' },
-        { name: 'compact', description: 'Compact conversation context', source: 'builtin' },
-        { name: 'context', description: 'Show context information', source: 'builtin' },
-        { name: 'cost', description: 'Show session cost', source: 'builtin' },
-        { name: 'plan', description: 'Toggle plan mode', source: 'builtin' },
+        { name: 'clear', description: 'Clear conversation history', source: 'builtin', routing: 'remote' },
+        { name: 'compact', description: 'Compact conversation context', source: 'builtin', routing: 'remote' },
+        { name: 'context', description: 'Show context information', source: 'builtin', routing: 'remote' },
+        { name: 'cost', description: 'Show session cost and token usage', source: 'builtin', routing: 'remote' },
+        { name: 'plan', description: 'Toggle plan mode', source: 'builtin', routing: 'remote' },
+        { name: 'status', description: 'Show session status', source: 'builtin', routing: 'remote' },
     ],
     codex: [],
     gemini: [
