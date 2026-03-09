@@ -164,12 +164,10 @@ export class SyncEngine {
     handleRealtimeEvent(event: SyncEvent): void {
         if (event.type === 'session-updated' && event.sessionId) {
             this.sessionCache.refreshSession(event.sessionId)
-            return
         }
 
         if (event.type === 'machine-updated' && event.machineId) {
             this.machineCache.refreshMachine(event.machineId)
-            return
         }
 
         if (event.type === 'message-received' && event.sessionId) {
@@ -246,6 +244,8 @@ export class SyncEngine {
         answers?: Record<string, string[]> | Record<string, { answers: string[] }>
     ): Promise<void> {
         await this.rpcGateway.approvePermission(sessionId, requestId, mode, allowTools, decision, answers)
+        // Notify all clients so they can refresh permission state
+        this.eventPublisher.emit({ type: 'session-updated', sessionId, data: { sessionId } })
     }
 
     async denyPermission(
@@ -254,6 +254,8 @@ export class SyncEngine {
         decision?: 'approved' | 'approved_for_session' | 'denied' | 'abort'
     ): Promise<void> {
         await this.rpcGateway.denyPermission(sessionId, requestId, decision)
+        // Notify all clients so they can refresh permission state
+        this.eventPublisher.emit({ type: 'session-updated', sessionId, data: { sessionId } })
     }
 
     async abortSession(sessionId: string): Promise<void> {
