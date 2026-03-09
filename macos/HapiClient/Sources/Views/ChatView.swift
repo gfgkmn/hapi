@@ -3,6 +3,7 @@ import SwiftUI
 struct ChatView: View {
     @StateObject private var vm: ChatViewModel
     @EnvironmentObject var appState: AppState
+    @ObservedObject private var fs = FontSettings.shared
     @State private var inputText = ""
     @State private var showingSettings = false
     @State private var showingFilePicker = false
@@ -222,6 +223,7 @@ struct ChatView: View {
 
                 // Text input
                 TextField("Message… (Cmd+Enter to send)", text: $inputText, axis: .vertical)
+                    .font(fs.bodyFont)
                     .textFieldStyle(.plain)
                     .lineLimit(1...12)
                     .padding(10)
