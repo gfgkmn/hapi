@@ -12,7 +12,9 @@ export interface ClearCommandResult {
 }
 
 export interface SpecialCommandResult {
-    type: 'compact' | 'clear' | 'status' | 'cost' | 'plan' | null;
+    type: 'compact' | 'clear' | 'status' | 'cost' | 'plan'
+        | 'fast' | 'rewind' | 'fork' | 'memory'
+        | 'task' | 'insights' | 'plugins' | null;
     originalMessage?: string;
 }
 
@@ -84,6 +86,27 @@ export function parseSpecialCommand(message: string): SpecialCommandResult {
     }
     if (trimmed === '/plan') {
         return { type: 'plan' };
+    }
+    if (trimmed === '/fast') {
+        return { type: 'fast' };
+    }
+    if (trimmed === '/rewind' || trimmed.startsWith('/rewind ')) {
+        return { type: 'rewind', originalMessage: trimmed };
+    }
+    if (trimmed === '/fork' || trimmed.startsWith('/fork ')) {
+        return { type: 'fork', originalMessage: trimmed };
+    }
+    if (trimmed === '/memory') {
+        return { type: 'memory' };
+    }
+    if (trimmed === '/task' || trimmed === '/tasks') {
+        return { type: 'task' };
+    }
+    if (trimmed === '/insights') {
+        return { type: 'insights' };
+    }
+    if (trimmed === '/plugins') {
+        return { type: 'plugins' };
     }
 
     return {

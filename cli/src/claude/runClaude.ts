@@ -17,6 +17,10 @@ import { createModeChangeHandler, createRunnerLifecycle, setControlledByUser } f
 import { isModelModeAllowedForFlavor, isPermissionModeAllowedForFlavor } from '@hapi/protocol';
 import { ModelModeSchema, PermissionModeSchema } from '@hapi/protocol/schemas';
 import { formatMessageWithAttachments } from '@/utils/attachmentFormatter';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { homedir } from 'os';
+import { existsSync } from 'fs';
 
 export interface StartOptions {
     model?: string
@@ -311,6 +315,74 @@ export async function runClaude(options: StartOptions = {}): Promise<void> {
                 session.sendSessionEvent({ type: 'message', message: 'Plan mode enabled. Claude will create a plan before executing.' });
             }
             syncSessionModes();
+            return;
+        }
+
+        // Handle /fast — toggle model mode
+        if (specialCommand.type === 'fast') {
+            logger.debug('[start] Detected /fast command');
+            currentModelMode = currentModelMode === 'opus' ? 'sonnet' : 'opus';
+            syncSessionModes();
+            session.sendSessionEvent({ type: 'message', message: `Model switched to ${currentModelMode}` });
+            return;
+        }
+
+        // Handle /rewind — not yet available (requires Hub-side message deletion)
+        if (specialCommand.type === 'rewind') {
+            logger.debug('[start] Detected /rewind command');
+            session.sendSessionEvent({
+                type: 'message',
+                message: '/rewind is not yet available in remote sessions (requires Hub-side message deletion)'
+            });
+            return;
+        }
+
+        // Handle /fork — not yet available (requires Hub-side session duplication)
+        if (specialCommand.type === 'fork') {
+            logger.debug('[start] Detected /fork command');
+            session.sendSessionEvent({
+                type: 'message',
+                message: '/fork is not yet available in remote sessions (requires Hub-side session duplication)'
+            });
+            return;
+        }
+
+        // Handle /memory — show CLAUDE.md contents
+        if (specialCommand.type === 'memory') {
+            logger.debug('[start] Detected /memory command');
+            (async () => {
+                const lines: string[] = [];
+                const paths = [
+                    join(workingDirectory, 'CLAUDE.md'),
+                    join(homedir(), '.claude', 'CLAUDE.md'),
+                ];
+                for (const p of paths) {
+                    if (existsSync(p)) {
+                        try {
+                            const content = await readFile(p, 'utf-8');
+                            lines.push(`── ${p} ──`);
+                            lines.push(content.trim());
+                            lines.push('');
+                        } catch {
+                            lines.push(`── ${p} (read error) ──`);
+                        }
+                    }
+                }
+                session.sendSessionEvent({
+                    type: 'message',
+                    message: lines.length > 0 ? lines.join('\n') : 'No CLAUDE.md files found'
+                });
+            })();
+            return;
+        }
+
+        // Handle deferred commands — not yet available in remote sessions
+        if (specialCommand.type === 'task' || specialCommand.type === 'insights' || specialCommand.type === 'plugins') {
+            logger.debug(`[start] Detected /${specialCommand.type} command (deferred)`);
+            session.sendSessionEvent({
+                type: 'message',
+                message: `/${specialCommand.type} is not yet available in remote sessions`
+            });
             return;
         }
 
