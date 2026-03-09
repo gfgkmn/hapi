@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 // MARK: - Message Bubble Router
 
@@ -444,10 +445,11 @@ struct CodeBlockView: View {
     var language: String? = nil
     @EnvironmentObject private var fs: FontSettings
     @State private var copied = false
+    @State private var wordWrap = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header with language + copy
+            // Header with language + wrap toggle + copy
             HStack(spacing: 6) {
                 if let lang = language, !lang.isEmpty {
                     Text(lang)
@@ -459,6 +461,22 @@ struct CodeBlockView: View {
                         .clipShape(Capsule())
                 }
                 Spacer()
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: "text.append")
+                        Text(wordWrap ? "Wrap" : "Scroll")
+                    }
+                    .font(.caption2)
+                    .foregroundStyle(wordWrap ? .blue : .secondary)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .help(wordWrap ? "Disable word wrap" : "Enable word wrap")
                 Button {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(text, forType: .string)
@@ -481,25 +499,18 @@ struct CodeBlockView: View {
             .padding(.top, 8)
 
             // Code content
-            if text.count > 5000 {
-                ScrollView {
-                    Text(String(text.prefix(20000)))
-                        .font(fs.codeFont)
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .lineSpacing(2)
+            if wordWrap {
+                codeText
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+            } else {
+                ScrollView(.horizontal, showsIndicators: true) {
+                    codeText
+                        .fixedSize(horizontal: true, vertical: false)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                 }
-                .frame(maxHeight: 500)
-            } else {
-                Text(text)
-                    .font(fs.codeFont)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .lineSpacing(2)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                .frame(maxHeight: text.count > 5000 ? 500 : nil)
             }
         }
         .background(Color.primary.opacity(0.04))
@@ -508,6 +519,15 @@ struct CodeBlockView: View {
                 .stroke(Color.primary.opacity(0.08), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private var codeText: some View {
+        let display = text.count > 20000 ? String(text.prefix(20000)) : text
+        return Text(display)
+            .font(fs.codeFont)
+            .textSelection(.enabled)
+            .frame(maxWidth: wordWrap ? .infinity : nil, alignment: .leading)
+            .lineSpacing(2)
     }
 }
 
@@ -551,16 +571,36 @@ struct ToolResultView: View {
     @EnvironmentObject private var fs: FontSettings
 
     var body: some View {
-        let raw = Self.extractText(from: content)
-        if !raw.isEmpty {
-            let parsed = Self.parsePersistedOutput(raw)
-            if parsed.isPersisted {
-                PersistedOutputView(summary: parsed.summary, text: parsed.text)
-            } else {
-                OutputBlockView(
-                    text: String(raw.prefix(10000)),
-                    collapsed: raw.count > 300
-                )
+        VStack(alignment: .leading, spacing: 6) {
+            // Render any images from content blocks
+            ForEach(Array(Self.extractImages(from: content).enumerated()), id: \.offset) { _, nsImage in
+                Button {
+                    ImageWindowController.show(image: nsImage)
+                } label: {
+                    ImageThumbnail(nsImage: nsImage, widthFraction: 0.8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+                .onHover { inside in
+                    if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+                }
+            }
+
+            // Render text content
+            let raw = Self.extractText(from: content)
+            if !raw.isEmpty {
+                let parsed = Self.parsePersistedOutput(raw)
+                if parsed.isPersisted {
+                    PersistedOutputView(summary: parsed.summary, text: parsed.text)
+                } else {
+                    OutputBlockView(
+                        text: String(raw.prefix(10000)),
+                        collapsed: raw.count > 300
+                    )
+                }
             }
         }
     }
@@ -571,6 +611,20 @@ struct ToolResultView: View {
             return blocks.compactMap { $0["text"] as? String }.joined(separator: "\n")
         }
         return ""
+    }
+
+    static func extractImages(from content: Any) -> [NSImage] {
+        guard let blocks = content as? [[String: Any]] else { return [] }
+        var images: [NSImage] = []
+        for block in blocks {
+            guard let type = block["type"] as? String, type == "image" else { continue }
+            guard let source = block["source"] as? [String: Any],
+                  let dataStr = source["data"] as? String,
+                  let data = Data(base64Encoded: dataStr),
+                  let nsImage = NSImage(data: data) else { continue }
+            images.append(nsImage)
+        }
+        return images
     }
 
     struct PersistedResult {
@@ -666,6 +720,7 @@ private struct OutputBlockView: View {
     let collapsed: Bool
     @EnvironmentObject private var fs: FontSettings
     @State private var isExpanded = false
+    @State private var wordWrap = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -692,30 +747,25 @@ private struct OutputBlockView: View {
             } else {
                 // Expanded or short content
                 VStack(alignment: .leading, spacing: 0) {
-                    if text.count > 5000 {
-                        ScrollView {
-                            Text(String(text.prefix(20000)))
-                                .font(fs.smallCodeFont)
-                                .foregroundStyle(.secondary)
-                                .textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .lineSpacing(2)
-                                .padding(10)
+                    // Wrap toggle + collapse button
+                    HStack(spacing: 6) {
+                        Spacer()
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
+                        } label: {
+                            HStack(spacing: 3) {
+                                Image(systemName: "text.append")
+                                Text(wordWrap ? "Wrap" : "Scroll")
+                            }
+                            .font(.caption2)
+                            .foregroundStyle(wordWrap ? .blue : .secondary)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
+                            .clipShape(Capsule())
                         }
-                        .frame(maxHeight: 400)
-                    } else {
-                        Text(text)
-                            .font(fs.smallCodeFont)
-                            .foregroundStyle(.secondary)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .lineSpacing(2)
-                            .padding(10)
-                    }
-
-                    if collapsed {
-                        HStack {
-                            Spacer()
+                        .buttonStyle(.plain)
+                        if collapsed {
                             Button {
                                 withAnimation(.easeInOut(duration: 0.2)) { isExpanded = false }
                             } label: {
@@ -724,9 +774,21 @@ private struct OutputBlockView: View {
                                     .foregroundStyle(.blue)
                             }
                             .buttonStyle(.plain)
-                            .padding(.trailing, 10)
-                            .padding(.bottom, 6)
                         }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.top, 6)
+
+                    if wordWrap {
+                        outputText
+                            .padding(10)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: true) {
+                            outputText
+                                .fixedSize(horizontal: true, vertical: false)
+                                .padding(10)
+                        }
+                        .frame(maxHeight: text.count > 5000 ? 400 : nil)
                     }
                 }
             }
@@ -738,5 +800,130 @@ private struct OutputBlockView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
         )
+    }
+
+    private var outputText: some View {
+        let display = text.count > 20000 ? String(text.prefix(20000)) : text
+        return Text(display)
+            .font(fs.smallCodeFont)
+            .foregroundStyle(.secondary)
+            .textSelection(.enabled)
+            .frame(maxWidth: wordWrap ? .infinity : nil, alignment: .leading)
+            .lineSpacing(2)
+    }
+}
+
+// MARK: - Image Window (resizable standalone NSWindow)
+
+private struct ImageThumbnail: View {
+    let nsImage: NSImage
+    let widthFraction: CGFloat
+
+    var body: some View {
+        GeometryReader { geo in
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: geo.size.width * widthFraction)
+        }
+        .aspectRatio(nsImage.size.width / max(nsImage.size.height, 1) * (1.0 / widthFraction), contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        )
+    }
+}
+
+private final class ImageWindowController {
+    static func show(image: NSImage) {
+        let screenFrame = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
+        // Start at 70% of screen size, centered
+        let w = min(screenFrame.width * 0.7, image.size.width + 40)
+        let h = min(screenFrame.height * 0.7, image.size.height + 40)
+        let x = screenFrame.midX - w / 2
+        let y = screenFrame.midY - h / 2
+        let rect = NSRect(x: x, y: y, width: max(w, 400), height: max(h, 300))
+
+        let window = NSWindow(
+            contentRect: rect,
+            styleMask: [.titled, .closable, .resizable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Image Preview"
+        window.isReleasedWhenClosed = false
+        window.backgroundColor = .black
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+
+        let hostView = NSHostingView(rootView:
+            ImagePopoverContent(image: image)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        )
+        window.contentView = hostView
+        window.makeKeyAndOrderFront(nil)
+    }
+}
+
+private struct ImagePopoverContent: View {
+    let image: NSImage
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            Image(nsImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .scaleEffect(scale)
+                .offset(offset)
+                .gesture(
+                    MagnificationGesture()
+                        .onChanged { value in
+                            scale = lastScale * value
+                        }
+                        .onEnded { _ in
+                            lastScale = scale
+                            if scale < 1.0 {
+                                withAnimation { scale = 1.0; lastScale = 1.0 }
+                            }
+                        }
+                )
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            offset = CGSize(
+                                width: lastOffset.width + value.translation.width,
+                                height: lastOffset.height + value.translation.height
+                            )
+                        }
+                        .onEnded { _ in
+                            lastOffset = offset
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    withAnimation {
+                        if scale > 1.0 {
+                            scale = 1.0; lastScale = 1.0
+                            offset = .zero; lastOffset = .zero
+                        } else {
+                            scale = 2.5; lastScale = 2.5
+                        }
+                    }
+                }
+
+            VStack {
+                Spacer()
+                Text("Scroll to zoom  ·  Drag to pan  ·  Double-click to fit")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.5))
+                    .padding(.bottom, 8)
+            }
+        }
     }
 }

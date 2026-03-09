@@ -774,9 +774,32 @@ struct MonoBlockView: View {
     let text: String
     var defaultExpanded: Bool = true
     @EnvironmentObject private var fs: FontSettings
+    @State private var wordWrap = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // Header with wrap toggle
+            HStack(spacing: 6) {
+                Spacer()
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: "text.append")
+                        Text(wordWrap ? "Wrap" : "Scroll")
+                    }
+                    .font(.caption2)
+                    .foregroundStyle(wordWrap ? .blue : .secondary)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 8)
+            .padding(.top, 6)
+
             if defaultExpanded {
                 codeContent
             } else {
@@ -797,10 +820,21 @@ struct MonoBlockView: View {
     }
 
     private var codeContent: some View {
-        Text(text)
-            .font(fs.codeFont)
-            .textSelection(.enabled)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        Group {
+            if wordWrap {
+                Text(text)
+                    .font(fs.codeFont)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                ScrollView(.horizontal, showsIndicators: true) {
+                    Text(text)
+                        .font(fs.codeFont)
+                        .textSelection(.enabled)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+            }
+        }
     }
 }
 
@@ -833,40 +867,69 @@ struct ReasoningBubble: View {
 struct ToolResultView: View {
     let content: Any
     @EnvironmentObject private var fs: FontSettings
+    @State private var selectedImage: UIImage? = nil
 
     var body: some View {
-        let raw = Self.extractText(from: content)
-        if !raw.isEmpty {
-            let parsed = Self.parsePersistedOutput(raw)
-            if parsed.isPersisted {
-                // Persisted output: show compact info chip
-                DisclosureGroup {
-                    if let inner = parsed.text {
-                        Text(inner.count > 10000 ? String(inner.prefix(10000)) + "…" : inner)
-                            .font(fs.smallCodeFont)
-                            .foregroundStyle(.secondary)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 4)
-                    }
+        VStack(alignment: .leading, spacing: 6) {
+            // Render any images from content blocks
+            ForEach(Array(Self.extractImages(from: content).enumerated()), id: \.offset) { _, uiImage in
+                Button {
+                    selectedImage = uiImage
                 } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "doc.on.clipboard")
-                            .font(.caption2)
-                        Text(parsed.summary ?? "Large output (stored)")
-                            .font(.caption2)
-                    }
-                    .foregroundStyle(.secondary)
+                    SwiftUI.Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                        )
                 }
-                .padding(8)
-                .background(Color(.systemGray6).opacity(0.6))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-            } else {
-                // Normal output: smaller, dimmer, collapsed if long
-                OutputBlockView(
-                    text: String(raw.prefix(10000)),
-                    collapsed: raw.count > 300
-                )
+                .buttonStyle(.plain)
+            }
+            .fullScreenCover(isPresented: Binding(
+                get: { selectedImage != nil },
+                set: { if !$0 { selectedImage = nil } }
+            )) {
+                if let img = selectedImage {
+                    ImageFullScreenView(image: img)
+                }
+            }
+
+            let raw = Self.extractText(from: content)
+            if !raw.isEmpty {
+                let parsed = Self.parsePersistedOutput(raw)
+                if parsed.isPersisted {
+                    // Persisted output: show compact info chip
+                    DisclosureGroup {
+                        if let inner = parsed.text {
+                            Text(inner.count > 10000 ? String(inner.prefix(10000)) + "…" : inner)
+                                .font(fs.smallCodeFont)
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 4)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "doc.on.clipboard")
+                                .font(.caption2)
+                            Text(parsed.summary ?? "Large output (stored)")
+                                .font(.caption2)
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                    .padding(8)
+                    .background(Color(.systemGray6).opacity(0.6))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                } else {
+                    // Normal output: smaller, dimmer, collapsed if long
+                    OutputBlockView(
+                        text: String(raw.prefix(10000)),
+                        collapsed: raw.count > 300
+                    )
+                }
             }
         }
     }
@@ -877,6 +940,20 @@ struct ToolResultView: View {
             return blocks.compactMap { $0["text"] as? String }.joined(separator: "\n")
         }
         return ""
+    }
+
+    private static func extractImages(from content: Any) -> [UIImage] {
+        guard let blocks = content as? [[String: Any]] else { return [] }
+        var images: [UIImage] = []
+        for block in blocks {
+            guard let type = block["type"] as? String, type == "image" else { continue }
+            guard let source = block["source"] as? [String: Any],
+                  let dataStr = source["data"] as? String,
+                  let data = Data(base64Encoded: dataStr),
+                  let uiImage = UIImage(data: data) else { continue }
+            images.append(uiImage)
+        }
+        return images
     }
 
     private struct PersistedResult {
@@ -921,36 +998,141 @@ private struct OutputBlockView: View {
     let text: String
     let collapsed: Bool
     @EnvironmentObject private var fs: FontSettings
+    @State private var wordWrap = true
 
     var body: some View {
-        if collapsed {
-            DisclosureGroup {
+        VStack(alignment: .leading, spacing: 0) {
+            if collapsed {
+                DisclosureGroup {
+                    wrapToggle
+                    outputContent
+                        .padding(.top, 4)
+                } label: {
+                    Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
+                        .font(fs.smallCodeFont)
+                        .lineLimit(1)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                wrapToggle
                 outputContent
-                    .padding(.top, 4)
-            } label: {
-                Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
-                    .font(fs.smallCodeFont)
-                    .lineLimit(1)
-                    .foregroundStyle(.secondary)
             }
-            .padding(8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.systemGray6).opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
-        } else {
-            outputContent
-                .padding(8)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.systemGray6).opacity(0.6))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+        }
+        .padding(8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemGray6).opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+
+    private var wrapToggle: some View {
+        HStack {
+            Spacer()
+            Button {
+                withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
+            } label: {
+                HStack(spacing: 3) {
+                    Image(systemName: "text.append")
+                    Text(wordWrap ? "Wrap" : "Scroll")
+                }
+                .font(.caption2)
+                .foregroundStyle(wordWrap ? .blue : .secondary)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
         }
     }
 
     private var outputContent: some View {
-        Text(text)
-            .font(fs.smallCodeFont)
-            .foregroundStyle(.secondary)
-            .textSelection(.enabled)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        Group {
+            if wordWrap {
+                Text(text)
+                    .font(fs.smallCodeFont)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                ScrollView(.horizontal, showsIndicators: true) {
+                    Text(text)
+                        .font(fs.smallCodeFont)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Image Full Screen (pinch to zoom)
+
+private struct ImageFullScreenView: View {
+    let image: UIImage
+    @Environment(\.dismiss) private var dismiss
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            SwiftUI.Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .scaleEffect(scale)
+                .offset(offset)
+                .gesture(
+                    MagnificationGesture()
+                        .onChanged { value in
+                            scale = lastScale * value
+                        }
+                        .onEnded { value in
+                            lastScale = scale
+                            if scale < 1.0 {
+                                withAnimation { scale = 1.0; lastScale = 1.0 }
+                            }
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture()
+                        .onChanged { value in
+                            offset = CGSize(
+                                width: lastOffset.width + value.translation.width,
+                                height: lastOffset.height + value.translation.height
+                            )
+                        }
+                        .onEnded { _ in
+                            lastOffset = offset
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    withAnimation {
+                        if scale > 1.0 {
+                            scale = 1.0; lastScale = 1.0
+                            offset = .zero; lastOffset = .zero
+                        } else {
+                            scale = 2.5; lastScale = 2.5
+                        }
+                    }
+                }
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.white.opacity(0.8))
+                    }
+                    .padding()
+                }
+                Spacer()
+            }
+        }
+        .statusBarHidden()
     }
 }
