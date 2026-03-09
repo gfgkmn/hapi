@@ -853,7 +853,7 @@ struct MarkdownTextView: View {
 
     private func splitByInlineLatex(_ text: String) -> [Segment] {
         guard let regex = try? NSRegularExpression(
-            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(.+?)(?<!\\s)\\$(?!\\$)",
+            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(?!\\d)(.+?)(?<!\\s)\\$(?!\\$)",
             options: []
         ) else {
             return [Segment(content: text, type: .text)]
@@ -1117,6 +1117,18 @@ private struct OutputBlockView: View {
     @State private var isExpanded = false
     @State private var wordWrap = true
 
+    /// Strip `cat -n` style line number prefixes (e.g. "  1→", " 12→")
+    private var cleanedText: String {
+        text.components(separatedBy: "\n")
+            .map { line in
+                if let range = line.range(of: #"^\s*\d+→"#, options: .regularExpression) {
+                    return String(line[range.upperBound...])
+                }
+                return line
+            }
+            .joined(separator: "\n")
+    }
+
     private var isLong: Bool {
         text.components(separatedBy: "\n").count > 4 || text.count > 300
     }
@@ -1162,14 +1174,14 @@ private struct OutputBlockView: View {
                 if isExpanded || !isLong {
                     // Full content (or short content that doesn't need collapsing)
                     if wordWrap || !isLong {
-                        Text(text)
+                        Text(cleanedText)
                             .font(fs.smallCodeFont)
                             .foregroundStyle(.secondary)
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         ScrollView(.horizontal, showsIndicators: true) {
-                            Text(text)
+                            Text(cleanedText)
                                 .font(fs.smallCodeFont)
                                 .foregroundStyle(.secondary)
                                 .textSelection(.enabled)
@@ -1177,7 +1189,7 @@ private struct OutputBlockView: View {
                         }
                     }
                 } else {
-                    Text(text)
+                    Text(cleanedText)
                         .font(fs.smallCodeFont)
                         .foregroundStyle(.secondary)
                         .lineLimit(4)

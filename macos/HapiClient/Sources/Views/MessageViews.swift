@@ -453,7 +453,7 @@ struct MarkdownTextView: View {
     private func splitByInlineLatex(_ text: String) -> [Segment] {
         // Match $...$ but not $$, and content must not start/end with space
         guard let regex = try? NSRegularExpression(
-            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(.+?)(?<!\\s)\\$(?!\\$)",
+            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(?!\\d)(.+?)(?<!\\s)\\$(?!\\$)",
             options: []
         ) else {
             return [Segment(content: text, type: .text)]
@@ -768,6 +768,18 @@ private struct OutputBlockView: View {
     @State private var isExpanded = false
     @State private var wordWrap = true
 
+    /// Strip `cat -n` style line number prefixes (e.g. "  1→", " 12→")
+    private var cleanedText: String {
+        text.components(separatedBy: "\n")
+            .map { line in
+                if let range = line.range(of: #"^\s*\d+→"#, options: .regularExpression) {
+                    return String(line[range.upperBound...])
+                }
+                return line
+            }
+            .joined(separator: "\n")
+    }
+
     private var isLong: Bool {
         text.components(separatedBy: "\n").count > 4 || text.count > 300
     }
@@ -821,7 +833,7 @@ private struct OutputBlockView: View {
                         .frame(maxHeight: text.count > 5000 ? 400 : nil)
                     }
                 } else {
-                    Text(text)
+                    Text(cleanedText)
                         .font(fs.smallCodeFont)
                         .foregroundStyle(.secondary)
                         .lineLimit(4)
@@ -841,7 +853,8 @@ private struct OutputBlockView: View {
     }
 
     private var outputText: some View {
-        let display = text.count > 20000 ? String(text.prefix(20000)) : text
+        let cleaned = cleanedText
+        let display = cleaned.count > 20000 ? String(cleaned.prefix(20000)) : cleaned
         return Text(display)
             .font(fs.smallCodeFont)
             .foregroundStyle(.secondary)
