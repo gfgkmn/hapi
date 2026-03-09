@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import MarkdownUI
 
 struct ChatView: View {
     @StateObject private var vm: ChatViewModel
@@ -85,8 +86,16 @@ struct ChatView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .scrollDismissesKeyboard(.interactively)
-                .defaultScrollAnchor(.bottom)
-                .geometryGroup()
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        proxy.scrollTo("bottom_anchor", anchor: .bottom)
+                    }
+                }
+                .onChange(of: vm.messages.count) { _, _ in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation { proxy.scrollTo("bottom_anchor", anchor: .bottom) }
+                    }
+                }
                 .onChange(of: vm.scrollToBottomTrigger) { _, _ in
                     withAnimation { proxy.scrollTo("bottom_anchor", anchor: .bottom) }
                 }
@@ -363,11 +372,14 @@ private struct PermissionRequestCard: View {
                     }
 
                     if let summary = argumentsSummary {
-                        Text(summary)
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.primary.opacity(0.8))
-                            .lineLimit(4)
-                            .textSelection(.enabled)
+                        ScrollView {
+                            Text(summary)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.primary.opacity(0.8))
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxHeight: 200)
                     }
                 }
                 .padding(.horizontal, 10)
@@ -570,6 +582,7 @@ struct ToolUseView: View {
     let name: String
     let input: Any
     @EnvironmentObject private var fs: FontSettings
+    @State private var isExpanded = false
 
     private var toolIcon: String {
         switch name.lowercased() {
@@ -596,31 +609,72 @@ struct ToolUseView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Tool name header
-            Label(name, systemImage: toolIcon)
-                .font(.caption.bold())
-                .foregroundStyle(toolColor)
+            if isExpanded {
+                // Expanded: full tool header + content
+                HStack(spacing: 6) {
+                    Label(name, systemImage: toolIcon)
+                        .font(.caption.bold())
+                        .foregroundStyle(toolColor)
+                    Spacer()
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { isExpanded = false }
+                    } label: {
+                        Text("Show less")
+                            .font(.caption2)
+                            .foregroundStyle(toolColor)
+                    }
+                    .buttonStyle(.plain)
+                }
                 .padding(.bottom, 6)
 
-            // Command / input summary
-            if let summary = inputSummary {
-                HStack(spacing: 0) {
-                    // Accent left border
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(toolColor.opacity(0.5))
-                        .frame(width: 3)
+                if let summary = inputSummary {
+                    HStack(spacing: 0) {
+                        RoundedRectangle(cornerRadius: 1.5)
+                            .fill(toolColor.opacity(0.5))
+                            .frame(width: 3)
 
-                    Text(summary.count > 500 ? String(summary.prefix(500)) + "…" : summary)
-                        .font(fs.codeFont)
-                        .foregroundStyle(.primary)
-                        .lineLimit(summary.count < 200 ? nil : 6)
-                        .textSelection(.enabled)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        Text(summary.count > 5000 ? String(summary.prefix(5000)) + "…" : summary)
+                            .font(fs.codeFont)
+                            .foregroundStyle(.primary)
+                            .textSelection(.enabled)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(toolColor.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(toolColor.opacity(0.06))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+            } else {
+                // Collapsed: single line — icon + name + first line of command
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { isExpanded = true }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: toolIcon)
+                            .font(.caption)
+                            .foregroundStyle(toolColor)
+                        Text(name)
+                            .font(.caption.bold())
+                            .foregroundStyle(toolColor)
+
+                        if let summary = inputSummary {
+                            Text(Self.firstLine(summary))
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                        }
+
+                        Spacer(minLength: 4)
+
+                        Image(systemName: "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(toolColor)
+                            .frame(width: 20, height: 20)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.vertical, 2)
@@ -632,6 +686,15 @@ struct ToolUseView: View {
         if let path = dict["filePath"] as? String ?? dict["file_path"] as? String { return path }
         if let pattern = dict["pattern"] as? String { return pattern }
         return nil
+    }
+
+    private static func firstLine(_ text: String) -> String {
+        // Collapse newlines + whitespace into single spaces for a dense preview
+        let collapsed = text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        return String(collapsed.prefix(120))
     }
 }
 
@@ -647,56 +710,81 @@ struct MarkdownTextView: View {
                 switch seg.type {
                 case .code:
                     MonoBlockView(text: seg.content)
-                case .table:
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        Text(seg.content)
-                            .font(fs.codeFont)
-                            .textSelection(.enabled)
-                    }
-                    .padding(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                case .latexBlock:
+                    KaTeXView(latex: seg.content, displayMode: true)
+                case .latexInline:
+                    KaTeXView(latex: seg.content, displayMode: false)
                 case .text:
-                    inlineMarkdown(seg.content)
+                    markdownContent(seg.content)
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func inlineMarkdown(_ str: String) -> some View {
+    private func markdownContent(_ str: String) -> some View {
         let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
-            if let attr = try? AttributedString(
-                markdown: trimmed,
-                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-            ) {
-                Text(attr).font(fs.bodyFont)
+            let inlineSegs = splitByInlineLatex(trimmed)
+            if inlineSegs.count == 1, case .text = inlineSegs[0].type {
+                Markdown(trimmed)
+                    .markdownTheme(
+                        .gitHub.text {
+                            FontFamily(.custom(fs.bodyFontName))
+                            FontSize(CGFloat(fs.bodyFontSize))
+                        }
+                    )
+                    .markdownTextStyle(\.code) {
+                        FontFamily(.custom(fs.codeFontName))
+                        FontSize(CGFloat(fs.codeFontSizeValue))
+                    }
+                    .textSelection(.enabled)
             } else {
-                Text(trimmed).font(fs.bodyFont)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(inlineSegs.enumerated()), id: \.offset) { _, inSeg in
+                        switch inSeg.type {
+                        case .latexInline:
+                            KaTeXView(latex: inSeg.content, displayMode: false)
+                        case .text:
+                            let t = inSeg.content.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !t.isEmpty {
+                                Markdown(t)
+                                    .markdownTheme(.gitHub)
+                                    .markdownTextStyle(\.text) {
+                                        FontSize(CGFloat(fs.bodyFontSize))
+                                        FontFamily(.custom(fs.bodyFontName))
+                                    }
+                                    .markdownTextStyle(\.code) {
+                                        FontFamily(.custom(fs.codeFontName))
+                                        FontSize(CGFloat(fs.codeFontSizeValue))
+                                    }
+                                    .textSelection(.enabled)
+                            }
+                        default:
+                            EmptyView()
+                        }
+                    }
+                }
             }
         }
     }
 
     // MARK: Segment splitting
 
-    private enum SegType { case text, code, table }
+    private enum SegType { case text, code, latexBlock, latexInline }
     private struct Segment {
         let content: String
         let type: SegType
     }
 
     private var segments: [Segment] {
-        // 1. Split by fenced code blocks
         let afterCode = splitByCodeBlocks(text)
-        // 2. Split remaining text segments by markdown tables
         var result: [Segment] = []
         for seg in afterCode {
-            if seg.type == .code {
-                result.append(seg)
+            if case .text = seg.type {
+                result.append(contentsOf: splitByDisplayLatex(seg.content))
             } else {
-                result.append(contentsOf: splitByTables(seg.content))
+                result.append(seg)
             }
         }
         return result.isEmpty ? [Segment(content: text, type: .text)] : result
@@ -731,38 +819,66 @@ struct MarkdownTextView: View {
         return result.isEmpty ? [Segment(content: text, type: .text)] : result
     }
 
-    private func splitByTables(_ text: String) -> [Segment] {
-        let lines = text.components(separatedBy: "\n")
+    private func splitByDisplayLatex(_ text: String) -> [Segment] {
+        guard let regex = try? NSRegularExpression(
+            pattern: "\\$\\$(.+?)\\$\\$",
+            options: .dotMatchesLineSeparators
+        ) else {
+            return [Segment(content: text, type: .text)]
+        }
         var result: [Segment] = []
-        var tableLines: [String] = []
-        var textLines: [String] = []
+        var lastEnd = text.startIndex
+        let nsRange = NSRange(text.startIndex..., in: text)
 
-        for line in lines {
-            if line.trimmingCharacters(in: .whitespaces).hasPrefix("|") {
-                if !textLines.isEmpty {
-                    let joined = textLines.joined(separator: "\n")
-                    if !joined.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        result.append(Segment(content: joined, type: .text))
-                    }
-                    textLines = []
-                }
-                tableLines.append(line)
-            } else {
-                if !tableLines.isEmpty {
-                    result.append(Segment(content: tableLines.joined(separator: "\n"), type: .table))
-                    tableLines = []
-                }
-                textLines.append(line)
+        for match in regex.matches(in: text, range: nsRange) {
+            guard let fullRange = Range(match.range, in: text),
+                  let exprRange = Range(match.range(at: 1), in: text) else { continue }
+            let before = String(text[lastEnd..<fullRange.lowerBound])
+            if !before.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                result.append(Segment(content: before, type: .text))
             }
+            result.append(Segment(
+                content: String(text[exprRange]).trimmingCharacters(in: .whitespacesAndNewlines),
+                type: .latexBlock
+            ))
+            lastEnd = fullRange.upperBound
         }
-        if !tableLines.isEmpty {
-            result.append(Segment(content: tableLines.joined(separator: "\n"), type: .table))
+
+        let remaining = String(text[lastEnd...])
+        if !remaining.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            result.append(Segment(content: remaining, type: .text))
         }
-        if !textLines.isEmpty {
-            let joined = textLines.joined(separator: "\n")
-            if !joined.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                result.append(Segment(content: joined, type: .text))
+        return result.isEmpty ? [Segment(content: text, type: .text)] : result
+    }
+
+    private func splitByInlineLatex(_ text: String) -> [Segment] {
+        guard let regex = try? NSRegularExpression(
+            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(.+?)(?<!\\s)\\$(?!\\$)",
+            options: []
+        ) else {
+            return [Segment(content: text, type: .text)]
+        }
+        var result: [Segment] = []
+        var lastEnd = text.startIndex
+        let nsRange = NSRange(text.startIndex..., in: text)
+
+        for match in regex.matches(in: text, range: nsRange) {
+            guard let fullRange = Range(match.range, in: text),
+                  let exprRange = Range(match.range(at: 1), in: text) else { continue }
+            let before = String(text[lastEnd..<fullRange.lowerBound])
+            if !before.isEmpty {
+                result.append(Segment(content: before, type: .text))
             }
+            result.append(Segment(
+                content: String(text[exprRange]),
+                type: .latexInline
+            ))
+            lastEnd = fullRange.upperBound
+        }
+
+        let remaining = String(text[lastEnd...])
+        if !remaining.isEmpty {
+            result.append(Segment(content: remaining, type: .text))
         }
         return result.isEmpty ? [Segment(content: text, type: .text)] : result
     }
@@ -998,71 +1114,81 @@ private struct OutputBlockView: View {
     let text: String
     let collapsed: Bool
     @EnvironmentObject private var fs: FontSettings
+    @State private var isExpanded = false
     @State private var wordWrap = true
+
+    private var isLong: Bool {
+        text.components(separatedBy: "\n").count > 4 || text.count > 300
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if collapsed {
-                DisclosureGroup {
-                    wrapToggle
-                    outputContent
-                        .padding(.top, 4)
-                } label: {
-                    Text(String(text.prefix(80)).replacingOccurrences(of: "\n", with: " "))
-                        .font(fs.smallCodeFont)
-                        .lineLimit(1)
-                        .foregroundStyle(.secondary)
+            // Wrap toggle + show less (only when expanded and long)
+            if isLong {
+                HStack(spacing: 6) {
+                    Spacer()
+                    if isExpanded {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
+                        } label: {
+                            HStack(spacing: 3) {
+                                Image(systemName: "text.append")
+                                Text(wordWrap ? "Wrap" : "Scroll")
+                            }
+                            .font(.caption2)
+                            .foregroundStyle(wordWrap ? .blue : .secondary)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
+                            .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { isExpanded.toggle() }
+                    } label: {
+                        Text(isExpanded ? "Show less" : "Show more")
+                            .font(.caption2)
+                            .foregroundStyle(.blue)
+                    }
+                    .buttonStyle(.plain)
                 }
-            } else {
-                wrapToggle
-                outputContent
+                .padding(.horizontal, 8)
+                .padding(.top, 6)
             }
-        }
-        .padding(8)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray6).opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-    }
 
-    private var wrapToggle: some View {
-        HStack {
-            Spacer()
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
-            } label: {
-                HStack(spacing: 3) {
-                    Image(systemName: "text.append")
-                    Text(wordWrap ? "Wrap" : "Scroll")
-                }
-                .font(.caption2)
-                .foregroundStyle(wordWrap ? .blue : .secondary)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 2)
-                .background(wordWrap ? Color.blue.opacity(0.1) : Color.clear)
-                .clipShape(Capsule())
-            }
-            .buttonStyle(.plain)
-        }
-    }
-
-    private var outputContent: some View {
-        Group {
-            if wordWrap {
-                Text(text)
-                    .font(fs.smallCodeFont)
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            } else {
-                ScrollView(.horizontal, showsIndicators: true) {
+            // Content
+            Group {
+                if isExpanded || !isLong {
+                    // Full content (or short content that doesn't need collapsing)
+                    if wordWrap || !isLong {
+                        Text(text)
+                            .font(fs.smallCodeFont)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: true) {
+                            Text(text)
+                                .font(fs.smallCodeFont)
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                                .fixedSize(horizontal: true, vertical: false)
+                        }
+                    }
+                } else {
                     Text(text)
                         .font(fs.smallCodeFont)
                         .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
-                        .fixedSize(horizontal: true, vertical: false)
+                        .lineLimit(4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            .padding(8)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemGray6).opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 

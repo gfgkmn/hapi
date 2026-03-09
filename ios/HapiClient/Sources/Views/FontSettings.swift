@@ -29,6 +29,12 @@ final class FontSettings: ObservableObject {
         .custom(codeFontFamily, size: max(codeFontSize - 2, 10))
     }
 
+    /// Convenience for MarkdownUI theme
+    var bodyFontSize: Double { fontSize }
+    var bodyFontName: String { fontFamily }
+    var codeFontName: String { codeFontFamily }
+    var codeFontSizeValue: Double { codeFontSize }
+
     static let availableFontFamilies: [String] = {
         var families = ["System", bundledFontName]
         families.append(contentsOf: UIFont.familyNames.sorted())

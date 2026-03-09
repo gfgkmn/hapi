@@ -15,7 +15,9 @@
 		2E308EAEF2BCAFB5AAB0FF28 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAA01E7036D48E5B8F660EB /* APIClient.swift */; };
 		55FE197E38E86F59E602314E /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08428A5859467AA49C6C78A5 /* SidebarView.swift */; };
 		7369CB2C4F9C644BE3BD465A /* MessageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458B73952661E9B8A049E0D9 /* MessageViews.swift */; };
+		78678B7CA41CF9B0C81971A1 /* KaTeXView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2202381964E89809B3B50EC2 /* KaTeXView.swift */; };
 		86C4C7FD0970162A907B271B /* MessageStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4158786204E0A68F89D39DB1 /* MessageStatus.swift */; };
+		8ECD138CC198FE51DD5BB8F4 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 10BA9466D481AD2738D9B06F /* MarkdownUI */; };
 		96C0F5BD4CCBE545F97BE4DF /* HapiClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAB4629612D8BD3C0400075 /* HapiClientApp.swift */; };
 		B0720D11C4C784296F952149 /* MessageMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8FF1D361EE9397F53406D /* MessageMerger.swift */; };
 		B890D736B16EC59F52881929 /* FontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B57707F2ABB17BEB3A1A7C /* FontSettings.swift */; };
@@ -35,6 +37,7 @@
 		069152D8D15ABFAF2EE27359 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		08428A5859467AA49C6C78A5 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		0B1D782F7005108F06D7CB96 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		2202381964E89809B3B50EC2 /* KaTeXView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaTeXView.swift; sourceTree = "<group>"; };
 		2CBC7397B2368FC8BA13E975 /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
 		39AC2E8C24BCD35DB934673E /* SessionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsViewModel.swift; sourceTree = "<group>"; };
 		3EAA01E7036D48E5B8F660EB /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
@@ -57,6 +60,17 @@
 		CEC956697141CC6EBECCF134 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		69FB0A96B055599BE466290E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8ECD138CC198FE51DD5BB8F4 /* MarkdownUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		0874C442CCE4AA3A295D5C0E /* Views */ = {
 			isa = PBXGroup;
@@ -66,6 +80,7 @@
 				5F0BCD8F36B347688226530D /* CreateSessionView.swift */,
 				97B57707F2ABB17BEB3A1A7C /* FontSettings.swift */,
 				A323912D632214DD78BFFDBC /* InputBarComponents.swift */,
+				2202381964E89809B3B50EC2 /* KaTeXView.swift */,
 				6688073D3FC399A5AF7EF9A4 /* LoginView.swift */,
 				458B73952661E9B8A049E0D9 /* MessageViews.swift */,
 				08428A5859467AA49C6C78A5 /* SidebarView.swift */,
@@ -168,6 +183,7 @@
 			buildPhases = (
 				767A69B2CF614DF79115A03E /* Sources */,
 				5E490FBBFD85C1775ECEAE90 /* Resources */,
+				69FB0A96B055599BE466290E /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -175,6 +191,7 @@
 			);
 			name = HapiClient;
 			packageProductDependencies = (
+				10BA9466D481AD2738D9B06F /* MarkdownUI */,
 			);
 			productName = HapiClient;
 			productReference = 46CB291C96D28368B64129F2 /* HapiClient.app */;
@@ -204,6 +221,9 @@
 			);
 			mainGroup = 6AE221A9D4F1124783081416;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3B7C8337958B4EB9D7DCD9C4 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -238,6 +258,7 @@
 				B890D736B16EC59F52881929 /* FontSettings.swift in Sources */,
 				96C0F5BD4CCBE545F97BE4DF /* HapiClientApp.swift in Sources */,
 				E66C0BCBE549EAF46C2CA077 /* InputBarComponents.swift in Sources */,
+				78678B7CA41CF9B0C81971A1 /* KaTeXView.swift in Sources */,
 				FBFC532E1441FE4F573CCFA5 /* Keychain.swift in Sources */,
 				D402939DCE38637C39C11C9F /* LocalStore.swift in Sources */,
 				101AF0B0E8AB8132326C1149 /* LoginView.swift in Sources */,
@@ -439,6 +460,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3B7C8337958B4EB9D7DCD9C4 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		10BA9466D481AD2738D9B06F /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3B7C8337958B4EB9D7DCD9C4 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1D8A3D285E12DE4EAA956E7C /* Project object */;
 }

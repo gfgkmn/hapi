@@ -7,6 +7,11 @@ options:
   createIntermediateGroups: true
   defaultConfig: Debug
 
+packages:
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui
+    from: "2.4.0"
+
 settings:
   base:
     SWIFT_VERSION: "5.10"
@@ -18,6 +23,10 @@ targets:
     platform: macOS
     sources:
       - path: HapiClient/Sources
+    resources:
+      - path: HapiClient/Resources/KaTeX
+    dependencies:
+      - package: MarkdownUI
     info:
       path: HapiClient/Info.plist
       properties:

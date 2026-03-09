@@ -422,11 +422,14 @@ private struct PermissionRequestCard: View {
                     }
 
                     if let summary = argumentsSummary {
-                        Text(summary)
-                            .font(.callout.monospaced())
-                            .foregroundStyle(.primary.opacity(0.8))
-                            .lineLimit(6)
-                            .textSelection(.enabled)
+                        ScrollView {
+                            Text(summary)
+                                .font(.callout.monospaced())
+                                .foregroundStyle(.primary.opacity(0.8))
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxHeight: 200)
                     }
                 }
                 .padding(.horizontal, 10)

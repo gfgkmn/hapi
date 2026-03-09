@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import MarkdownUI
 
 // MARK: - Message Bubble Router
 
@@ -179,116 +180,107 @@ struct ToolUseView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Tool header
-            HStack(spacing: 6) {
-                Image(systemName: toolIcon)
-                    .font(.caption)
-                    .foregroundStyle(toolColor)
-                Text(name)
-                    .font(.caption.bold())
-                    .foregroundStyle(toolColor)
-
-                // Show primary info inline with header
-                if let brief = briefSummary {
-                    Text(brief)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+            if isExpanded {
+                // Expanded: full tool header + content
+                HStack(spacing: 6) {
+                    Label(name, systemImage: toolIcon)
+                        .font(.caption.bold())
+                        .foregroundStyle(toolColor)
+                    Spacer()
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { isExpanded = false }
+                    } label: {
+                        Text("Show less")
+                            .font(.caption2)
+                            .foregroundStyle(toolColor)
+                    }
+                    .buttonStyle(.plain)
                 }
+                .padding(.bottom, 6)
 
-                Spacer(minLength: 0)
-            }
-            .padding(.bottom, 6)
-
-            // Full input content
-            if let detail = detailContent {
-                let isLong = detail.count > 400
-                VStack(alignment: .leading, spacing: 0) {
+                if let detail = detailContent {
                     HStack(spacing: 0) {
                         RoundedRectangle(cornerRadius: 1.5)
                             .fill(toolColor.opacity(0.5))
                             .frame(width: 3)
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            if isLong && isExpanded {
-                                ScrollView {
-                                    Text(String(detail.prefix(20000)))
-                                        .font(fs.codeFont)
-                                        .textSelection(.enabled)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 8)
-                                }
-                                .frame(maxHeight: 400)
-                            } else {
-                                Text(isLong ? String(detail.prefix(400)) + "…" : detail)
-                                    .font(fs.codeFont)
-                                    .textSelection(.enabled)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
-                            }
-
-                            if isLong {
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        isExpanded.toggle()
-                                    }
-                                } label: {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                            .font(.caption2)
-                                        Text(isExpanded ? "Show less" : "Show all (\(detail.count) chars)")
-                                            .font(.caption2)
-                                    }
-                                    .foregroundStyle(toolColor)
-                                    .padding(.horizontal, 10)
-                                    .padding(.bottom, 6)
-                                }
-                                .buttonStyle(.plain)
-                            }
+                        ScrollView {
+                            Text(detail.count > 20000 ? String(detail.prefix(20000)) + "…" : detail)
+                                .font(fs.codeFont)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
                         }
+                        .frame(maxHeight: detail.count > 5000 ? 400 : nil)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(toolColor.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(toolColor.opacity(0.05))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+            } else {
+                // Collapsed: single line — icon + name + first line of command
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { isExpanded = true }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: toolIcon)
+                            .font(.caption)
+                            .foregroundStyle(toolColor)
+                        Text(name)
+                            .font(.caption.bold())
+                            .foregroundStyle(toolColor)
+
+                        if let detail = detailContent {
+                            Text(Self.firstLine(detail))
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                        }
+
+                        Spacer(minLength: 4)
+
+                        Image(systemName: "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(toolColor)
+                            .frame(width: 20, height: 20)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.vertical, 2)
     }
 
-    /// Short description for the header line
-    private var briefSummary: String? {
-        guard let dict = input as? [String: Any] else { return nil }
-        if let path = dict["filePath"] as? String ?? dict["file_path"] as? String { return path }
-        if let pattern = dict["pattern"] as? String { return pattern }
-        return nil
-    }
-
     /// Full content to display in the detail block
     private var detailContent: String? {
         guard let dict = input as? [String: Any] else { return nil }
-        // Bash/shell: show command
         if let cmd = dict["command"] as? String { return cmd }
-        // Edit: show old/new strings
         if let oldStr = dict["old_string"] as? String ?? dict["oldString"] as? String {
             let newStr = dict["new_string"] as? String ?? dict["newString"] as? String ?? ""
             var result = "- " + oldStr
             if !newStr.isEmpty { result += "\n+ " + newStr }
             return result
         }
-        // Write: show content
         if let content = dict["content"] as? String { return content }
-        // Grep/Glob: show pattern (already in header, but show path too)
+        if let path = dict["filePath"] as? String ?? dict["file_path"] as? String { return path }
         if let pattern = dict["pattern"] as? String {
             let path = dict["path"] as? String
             return path != nil ? "\(pattern) in \(path!)" : pattern
         }
-        // Agent/task: show prompt
         if let prompt = dict["prompt"] as? String { return prompt }
         if let description = dict["description"] as? String { return description }
         return nil
+    }
+
+    private static func firstLine(_ text: String) -> String {
+        let collapsed = text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        return String(collapsed.prefix(120))
     }
 }
 
@@ -304,40 +296,64 @@ struct MarkdownTextView: View {
                 switch seg.type {
                 case .code(let lang):
                     CodeBlockView(text: seg.content, language: lang)
-                case .table:
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        Text(seg.content)
-                            .font(fs.codeFont)
-                            .textSelection(.enabled)
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.primary.opacity(0.04))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                case .latexBlock:
+                    KaTeXView(latex: seg.content, displayMode: true)
+                case .latexInline:
+                    KaTeXView(latex: seg.content, displayMode: false)
                 case .text:
-                    inlineMarkdown(seg.content)
+                    markdownContent(seg.content)
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func inlineMarkdown(_ str: String) -> some View {
+    private func markdownContent(_ str: String) -> some View {
         let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
-            if let attr = try? AttributedString(
-                markdown: trimmed,
-                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-            ) {
-                Text(attr)
-                    .font(fs.bodyFont)
+            // Check if there's inline LaTeX — if so, split and render hybrid
+            let inlineSegs = splitByInlineLatex(trimmed)
+            if inlineSegs.count == 1, case .text = inlineSegs[0].type {
+                // No inline LaTeX — pure markdown
+                Markdown(trimmed)
+                    .markdownTheme(
+                        .gitHub.text {
+                            FontFamily(.custom(fs.bodyFontName))
+                            FontSize(CGFloat(fs.bodyFontSize))
+                        }
+                    )
+                    .markdownTextStyle(\.code) {
+                        FontFamily(.custom(fs.codeFontName))
+                        FontSize(CGFloat(fs.codeFontSize))
+                    }
                     .textSelection(.enabled)
-                    .lineSpacing(3)
             } else {
-                Text(trimmed)
-                    .font(fs.bodyFont)
-                    .textSelection(.enabled)
-                    .lineSpacing(3)
+                // Has inline LaTeX — render segments
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(inlineSegs.enumerated()), id: \.offset) { _, inSeg in
+                        switch inSeg.type {
+                        case .latexInline:
+                            KaTeXView(latex: inSeg.content, displayMode: false)
+                        case .text:
+                            let t = inSeg.content.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !t.isEmpty {
+                                Markdown(t)
+                                    .markdownTheme(.gitHub)
+                                    .markdownTextStyle(\.text) {
+                                        FontSize(CGFloat(fs.bodyFontSize))
+                                        FontFamily(.custom(fs.bodyFontName))
+                                    }
+                                    .markdownTextStyle(\.code) {
+                                        FontFamily(.custom(fs.codeFontName))
+                                        FontSize(CGFloat(fs.codeFontSize))
+                                    }
+                                    .textSelection(.enabled)
+                            }
+                        default:
+                            EmptyView()
+                        }
+                    }
+                }
             }
         }
     }
@@ -347,7 +363,8 @@ struct MarkdownTextView: View {
     private enum SegType {
         case text
         case code(language: String?)
-        case table
+        case latexBlock
+        case latexInline
     }
     private struct Segment {
         let content: String
@@ -359,7 +376,7 @@ struct MarkdownTextView: View {
         var result: [Segment] = []
         for seg in afterCode {
             if case .text = seg.type {
-                result.append(contentsOf: splitByTables(seg.content))
+                result.append(contentsOf: splitByDisplayLatex(seg.content))
             } else {
                 result.append(seg)
             }
@@ -401,38 +418,67 @@ struct MarkdownTextView: View {
         return result.isEmpty ? [Segment(content: text, type: .text)] : result
     }
 
-    private func splitByTables(_ text: String) -> [Segment] {
-        let lines = text.components(separatedBy: "\n")
+    private func splitByDisplayLatex(_ text: String) -> [Segment] {
+        guard let regex = try? NSRegularExpression(
+            pattern: "\\$\\$(.+?)\\$\\$",
+            options: .dotMatchesLineSeparators
+        ) else {
+            return [Segment(content: text, type: .text)]
+        }
         var result: [Segment] = []
-        var tableLines: [String] = []
-        var textLines: [String] = []
+        var lastEnd = text.startIndex
+        let nsRange = NSRange(text.startIndex..., in: text)
 
-        for line in lines {
-            if line.trimmingCharacters(in: .whitespaces).hasPrefix("|") {
-                if !textLines.isEmpty {
-                    let joined = textLines.joined(separator: "\n")
-                    if !joined.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        result.append(Segment(content: joined, type: .text))
-                    }
-                    textLines = []
-                }
-                tableLines.append(line)
-            } else {
-                if !tableLines.isEmpty {
-                    result.append(Segment(content: tableLines.joined(separator: "\n"), type: .table))
-                    tableLines = []
-                }
-                textLines.append(line)
+        for match in regex.matches(in: text, range: nsRange) {
+            guard let fullRange = Range(match.range, in: text),
+                  let exprRange = Range(match.range(at: 1), in: text) else { continue }
+            let before = String(text[lastEnd..<fullRange.lowerBound])
+            if !before.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                result.append(Segment(content: before, type: .text))
             }
+            result.append(Segment(
+                content: String(text[exprRange]).trimmingCharacters(in: .whitespacesAndNewlines),
+                type: .latexBlock
+            ))
+            lastEnd = fullRange.upperBound
         }
-        if !tableLines.isEmpty {
-            result.append(Segment(content: tableLines.joined(separator: "\n"), type: .table))
+
+        let remaining = String(text[lastEnd...])
+        if !remaining.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            result.append(Segment(content: remaining, type: .text))
         }
-        if !textLines.isEmpty {
-            let joined = textLines.joined(separator: "\n")
-            if !joined.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                result.append(Segment(content: joined, type: .text))
+        return result.isEmpty ? [Segment(content: text, type: .text)] : result
+    }
+
+    private func splitByInlineLatex(_ text: String) -> [Segment] {
+        // Match $...$ but not $$, and content must not start/end with space
+        guard let regex = try? NSRegularExpression(
+            pattern: "(?<!\\$)\\$(?!\\$)(?!\\s)(.+?)(?<!\\s)\\$(?!\\$)",
+            options: []
+        ) else {
+            return [Segment(content: text, type: .text)]
+        }
+        var result: [Segment] = []
+        var lastEnd = text.startIndex
+        let nsRange = NSRange(text.startIndex..., in: text)
+
+        for match in regex.matches(in: text, range: nsRange) {
+            guard let fullRange = Range(match.range, in: text),
+                  let exprRange = Range(match.range(at: 1), in: text) else { continue }
+            let before = String(text[lastEnd..<fullRange.lowerBound])
+            if !before.isEmpty {
+                result.append(Segment(content: before, type: .text))
             }
+            result.append(Segment(
+                content: String(text[exprRange]),
+                type: .latexInline
+            ))
+            lastEnd = fullRange.upperBound
+        }
+
+        let remaining = String(text[lastEnd...])
+        if !remaining.isEmpty {
+            result.append(Segment(content: remaining, type: .text))
         }
         return result.isEmpty ? [Segment(content: text, type: .text)] : result
     }
@@ -722,34 +768,17 @@ private struct OutputBlockView: View {
     @State private var isExpanded = false
     @State private var wordWrap = true
 
+    private var isLong: Bool {
+        text.components(separatedBy: "\n").count > 4 || text.count > 300
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if collapsed && !isExpanded {
-                // Collapsed: preview + expand button
-                HStack(spacing: 0) {
-                    Text(String(text.prefix(120)).replacingOccurrences(of: "\n", with: " "))
-                        .font(fs.smallCodeFont)
-                        .lineLimit(2)
-                        .foregroundStyle(.secondary)
-
-                    Spacer(minLength: 8)
-
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { isExpanded = true }
-                    } label: {
-                        Text("Show all")
-                            .font(.caption2)
-                            .foregroundStyle(.blue)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(10)
-            } else {
-                // Expanded or short content
-                VStack(alignment: .leading, spacing: 0) {
-                    // Wrap toggle + collapse button
-                    HStack(spacing: 6) {
-                        Spacer()
+            // Controls (only for long content)
+            if isLong {
+                HStack(spacing: 6) {
+                    Spacer()
+                    if isExpanded {
                         Button {
                             withAnimation(.easeInOut(duration: 0.15)) { wordWrap.toggle() }
                         } label: {
@@ -765,33 +794,42 @@ private struct OutputBlockView: View {
                             .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
-                        if collapsed {
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.2)) { isExpanded = false }
-                            } label: {
-                                Text("Show less")
-                                    .font(.caption2)
-                                    .foregroundStyle(.blue)
-                            }
-                            .buttonStyle(.plain)
-                        }
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 6)
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { isExpanded.toggle() }
+                    } label: {
+                        Text(isExpanded ? "Show less" : "Show more")
+                            .font(.caption2)
+                            .foregroundStyle(.blue)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 10)
+                .padding(.top, 6)
+            }
 
-                    if wordWrap {
+            // Content
+            Group {
+                if isExpanded || !isLong {
+                    if wordWrap || !isLong {
                         outputText
-                            .padding(10)
                     } else {
                         ScrollView(.horizontal, showsIndicators: true) {
                             outputText
                                 .fixedSize(horizontal: true, vertical: false)
-                                .padding(10)
                         }
                         .frame(maxHeight: text.count > 5000 ? 400 : nil)
                     }
+                } else {
+                    Text(text)
+                        .font(fs.smallCodeFont)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineSpacing(2)
                 }
             }
+            .padding(10)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.primary.opacity(0.03))
