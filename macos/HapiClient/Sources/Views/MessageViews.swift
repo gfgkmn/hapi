@@ -768,16 +768,9 @@ private struct OutputBlockView: View {
     @State private var isExpanded = false
     @State private var wordWrap = true
 
-    /// Strip `cat -n` style line number prefixes (e.g. "  1→", " 12→")
+    /// Replace `→` arrows in `cat -n` line number prefixes with a space
     private var cleanedText: String {
-        text.components(separatedBy: "\n")
-            .map { line in
-                if let range = line.range(of: #"^\s*\d+→"#, options: .regularExpression) {
-                    return String(line[range.upperBound...])
-                }
-                return line
-            }
-            .joined(separator: "\n")
+        text.replacingOccurrences(of: "→", with: " ")
     }
 
     private var isLong: Bool {
